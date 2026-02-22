@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e084a6bea21bb4544b0536cde919a79b
+guid: 79329732bdb7b47a8b639f2027618d03
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Player Idle 48x48_0
+      name: player katana run 48x48_0
       rect:
         serializedVersion: 2
         x: 0
@@ -112,14 +112,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 644496d78b537485baa2238b5b6c5423
-      internalID: 1842384932
+      spriteID: 939c804dff9d948e689535099df6e7af
+      internalID: 1747689117
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Idle 48x48_1
+      name: player katana run 48x48_1
       rect:
         serializedVersion: 2
         x: 48
@@ -134,14 +134,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c0b510ebbf3c742e489bce2f56c0658d
-      internalID: -461472298
+      spriteID: eaa7f3e8400224e079d6a9c95d76a1be
+      internalID: 1776740428
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Idle 48x48_2
+      name: player katana run 48x48_2
       rect:
         serializedVersion: 2
         x: 96
@@ -156,14 +156,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0916843bdecb64b94959f86985e7633c
-      internalID: 1477305585
+      spriteID: 682fccea663464f59bdf49009f47cbbd
+      internalID: -451129852
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Idle 48x48_3
+      name: player katana run 48x48_3
       rect:
         serializedVersion: 2
         x: 144
@@ -178,14 +178,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b2e3d6e38cdf342ef9b19d1126621648
-      internalID: 301482166
+      spriteID: 4b1b6b3ed60db4d3eb4f939daf40a850
+      internalID: 1178546293
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Idle 48x48_4
+      name: player katana run 48x48_4
       rect:
         serializedVersion: 2
         x: 192
@@ -200,14 +200,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 41b23ccf426eb45ca88842a6a055b3ad
-      internalID: 1808132904
+      spriteID: a155c1fce799b47c98bc353699272eed
+      internalID: 1325910312
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Idle 48x48_5
+      name: player katana run 48x48_5
       rect:
         serializedVersion: 2
         x: 240
@@ -222,14 +222,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f797936c6718e4293a77b8291bfe71ee
-      internalID: 1934206155
+      spriteID: c48bc9fe5201d4f909c969fd868af6dd
+      internalID: -772162599
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Idle 48x48_6
+      name: player katana run 48x48_6
       rect:
         serializedVersion: 2
         x: 288
@@ -244,14 +244,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c51ab3eb8660c417280944698f63728b
-      internalID: 1147803654
+      spriteID: cfe34922221774d408a6908edabf35f5
+      internalID: -1181691085
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Idle 48x48_7
+      name: player katana run 48x48_7
       rect:
         serializedVersion: 2
         x: 336
@@ -266,52 +266,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 43602f99ce3284e4e8967c94ec16a9d9
-      internalID: -1503771104
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Player Idle 48x48_8
-      rect:
-        serializedVersion: 2
-        x: 384
-        y: 0
-        width: 48
-        height: 48
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 78bd7d358bd7d4766996a716e19979e4
-      internalID: 1143658947
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Player Idle 48x48_9
-      rect:
-        serializedVersion: 2
-        x: 432
-        y: 0
-        width: 48
-        height: 48
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: efd741a35a80444d3b05ed574c316ebc
-      internalID: 1301861504
+      spriteID: f2b4b7663068c45639a5026f97e9dd88
+      internalID: -278369106
       vertices: []
       indices: 
       edges: []
@@ -320,7 +276,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: ba4f71f91c860464cb1ddf95d91002ac
+    spriteID: 7f469d5a02d814cf6b3d97cf93c4e994
     internalID: 0
     vertices: []
     indices: 
@@ -332,16 +288,14 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":48.0,"y":48.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Player Idle 48x48_0: 1842384932
-      Player Idle 48x48_1: -461472298
-      Player Idle 48x48_2: 1477305585
-      Player Idle 48x48_3: 301482166
-      Player Idle 48x48_4: 1808132904
-      Player Idle 48x48_5: 1934206155
-      Player Idle 48x48_6: 1147803654
-      Player Idle 48x48_7: -1503771104
-      Player Idle 48x48_8: 1143658947
-      Player Idle 48x48_9: 1301861504
+      player katana run 48x48_0: 1747689117
+      player katana run 48x48_1: 1776740428
+      player katana run 48x48_2: -451129852
+      player katana run 48x48_3: 1178546293
+      player katana run 48x48_4: 1325910312
+      player katana run 48x48_5: -772162599
+      player katana run 48x48_6: -1181691085
+      player katana run 48x48_7: -278369106
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

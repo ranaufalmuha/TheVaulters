@@ -205,13 +205,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.52, z: -10}
+  m_LocalRotation: {x: 0.020868544, y: -0, z: -0, w: 0.99978226}
+  m_LocalPosition: {x: 0, y: 2.88, z: -18.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 2.392, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -545,7 +545,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 1842384932, guid: e084a6bea21bb4544b0536cde919a79b, type: 3}
+  m_Sprite: {fileID: 1828699962, guid: fc83ab89d288a492cafb70dc4b58c422, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -627,7 +627,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1380380667}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 3
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -643,7 +643,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 1
+  m_Interpolate: 0
   m_Constraints: 120
   m_CollisionDetection: 1
 --- !u!4 &1380380670
@@ -655,8 +655,8 @@ Transform:
   m_GameObject: {fileID: 1380380667}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.141, y: 0.506, z: 0}
-  m_LocalScale: {x: 1.5895674, y: 1.5895674, z: 1.5895674}
+  m_LocalPosition: {x: -1, y: 1.23, z: 0}
+  m_LocalScale: {x: 2.9524624, y: 2.9524624, z: 2.9524624}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1088663171}
@@ -676,17 +676,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement3D
   moveSpeed: 8
-  acceleration: 30
-  deceleration: 40
-  jumpForce: 8
-  coyoteTime: 0.08
-  jumpBufferTime: 0.1
+  maxJumps: 2
+  jumpHeight: 5
+  fallMultiplier: 4
+  lowJumpMultiplier: 3
   groundCheck: {fileID: 403227142}
   groundCheckRadius: 0.2
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
   visualToFlip: {fileID: 1088663171}
+  animator: {fileID: 1088663173}
+  apexThreshold: 0.2
 --- !u!1 &2058878111
 GameObject:
   m_ObjectHideFlags: 0
@@ -793,8 +794,8 @@ Transform:
   m_GameObject: {fileID: 2058878111}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.02, y: -2.5011, z: 0}
-  m_LocalScale: {x: 13.220378, y: 4.934462, z: 1.5241}
+  m_LocalPosition: {x: 0.02, y: -4.3903, z: 0}
+  m_LocalScale: {x: 23.278828, y: 8.71278, z: 1.5241}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
