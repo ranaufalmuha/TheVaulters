@@ -28,7 +28,14 @@ public class PlayerMovement3D : MonoBehaviour
     [Header("Attack")]
     [SerializeField] private Collider attackHitbox;
     [SerializeField] private float attackDuration = 0.25f;
-    [SerializeField] private float knockbackForce = 8f;
+
+    [SerializeField] private float knockbackIdle = 8f;
+    [SerializeField] private float knockbackRun = 9f;
+    [SerializeField] private float knockbackAir = 8.5f;
+
+    [SerializeField] private float enemyUpBias = 0.6f; // arah knockback Y
+
+    [SerializeField] private float hitstopDuration = 0.06f;
 
     private Rigidbody rb;
     private PlayerInputActions inputActions;
@@ -184,26 +191,24 @@ public class PlayerMovement3D : MonoBehaviour
         isAttacking = true;
         canCombo = false;
 
-        animator.SetBool("IsAttacking", true);
         animator.SetInteger("AttackType", (int)currentAttack);
+        animator.SetTrigger("Attack");
 
         ApplySelfForce();
 
         attackHitbox.enabled = true;
 
-        yield return new WaitForSeconds(attackDuration * 0.5f);
+        yield return new WaitForSeconds(attackDuration * 1f);
 
         canCombo = true;
 
-        yield return new WaitForSeconds(attackDuration * 0.5f);
+        yield return new WaitForSeconds(attackDuration * 1f);
 
         attackHitbox.enabled = false;
 
         isAttacking = false;
         canCombo = false;
         currentAttack = AttackType.None;
-
-        animator.SetBool("IsAttacking", false);
     }
 
     private void ApplySelfForce()
@@ -218,5 +223,51 @@ public class PlayerMovement3D : MonoBehaviour
         {
             rb.AddForce(new Vector3(dir * 4f, 2f, 0f), ForceMode.Impulse);
         }
+    }
+
+    public void NotifyHit(EnemyFighter enemy, Vector3 hitPoint)
+    {
+        if (enemy == null) return;
+
+        // Determine force based on currentAttack
+        float force = GetKnockbackForce();
+
+        // Determine direction from player facing
+        float dir = Mathf.Sign(visualToFlip.localScale.x);
+
+        // Knock direction: mostly X + sedikit Y
+        Vector3 knockDir = new Vector3(dir, enemyUpBias, 0f).normalized;
+
+        enemy.TakeHit(knockDir, force);
+
+        // Hitstop
+        HitstopManager.Instance?.DoHitstop(hitstopDuration);
+    }
+
+    private float GetKnockbackForce()
+    {
+        switch (currentAttack)
+        {
+            case AttackType.Run1:
+            case AttackType.Run2:
+                return knockbackRun;
+
+            case AttackType.Air1:
+            case AttackType.Air2:
+                return knockbackAir;
+
+            case AttackType.Idle1:
+            case AttackType.Idle2:
+            default:
+                return knockbackIdle;
+        }
+    }
+
+    public void ReceiveHit(Vector3 knockDir, float force)
+    {
+        rb.linearVelocity = Vector3.zero;
+        rb.AddForce(knockDir * force, ForceMode.Impulse);
+
+        HitstopManager.Instance?.DoHitstop(0.06f);
     }
 }

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 73a1ff85494554e70acd732b4f8bbfb0
+guid: 8bea48f771fa54cfd902576d684990c0
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 133
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: attack-idle 80x64_0
+      name: attack-run 80x80_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 80
-        height: 64
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -112,20 +112,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ab40c57aea04d4710ac4bf25ce36f299
-      internalID: -78312976
+      spriteID: 062b09d0fb732410cb464465695078ed
+      internalID: -576009419
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: attack-idle 80x64_1
+      name: attack-run 80x80_1
       rect:
         serializedVersion: 2
         x: 80
         y: 0
         width: 80
-        height: 64
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -134,20 +134,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6b22e0bd97dc946d4a05342dab0f5a95
-      internalID: -370057335
+      spriteID: d9ed18f9f4cc0487684a21a064bb95e2
+      internalID: 589958558
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: attack-idle 80x64_2
+      name: attack-run 80x80_2
       rect:
         serializedVersion: 2
         x: 160
         y: 0
         width: 80
-        height: 64
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,20 +156,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bfb7394d82e2d4f50b4fbb27c2c35483
-      internalID: -243442957
+      spriteID: 78f3701e0dfb242c282e86388a685201
+      internalID: -239616383
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: attack-idle 80x64_3
+      name: attack-run 80x80_3
       rect:
         serializedVersion: 2
         x: 240
         y: 0
         width: 80
-        height: 64
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -178,20 +178,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f8a9ed48595a144b08fad3eb9bf3bd69
-      internalID: -1335762945
+      spriteID: 237025ae531564b57802e52e82fd5bdd
+      internalID: 1315733260
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: attack-idle 80x64_4
+      name: attack-run 80x80_4
       rect:
         serializedVersion: 2
         x: 320
         y: 0
         width: 80
-        height: 64
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -200,20 +200,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1d81f4fea05c540278dc2cf24c13ecbe
-      internalID: 662238456
+      spriteID: b2ab9f9ede55d4d8cabaaadf0762d495
+      internalID: -1377291506
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: attack-idle 80x64_5
+      name: attack-run 80x80_5
       rect:
         serializedVersion: 2
         x: 400
         y: 0
         width: 80
-        height: 64
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -222,20 +222,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2209b517998304d6b92fc02c12610d96
-      internalID: -132328691
+      spriteID: 198a1ff57c9a2496085884d8c10210a1
+      internalID: -646097482
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: attack-idle 80x64_6
+      name: attack-run 80x80_6
       rect:
         serializedVersion: 2
         x: 480
         y: 0
         width: 80
-        height: 64
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -244,20 +244,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b7548c67c140e48a3af1763d824a4512
-      internalID: 1438288700
+      spriteID: 21305115a4d6a4bc98281120c167a6cc
+      internalID: -957219575
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: attack-idle 80x64_7
+      name: attack-run 80x80_7
       rect:
         serializedVersion: 2
         x: 560
         y: 0
         width: 80
-        height: 64
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -266,30 +266,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cbec5450d226848ff9094e834645f625
-      internalID: 1039696366
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: attack-idle 80x64_8
-      rect:
-        serializedVersion: 2
-        x: 640
-        y: 0
-        width: 80
-        height: 64
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 136210fb7e54c478c9a16b157f8dbc95
-      internalID: 122555777
+      spriteID: aa284b97731fb4936967cf278b337734
+      internalID: 1375923683
       vertices: []
       indices: 
       edges: []
@@ -298,7 +276,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: cac23df1766454b398be870efd2d1404
+    spriteID: 4854e8d108c284dc486bc53a3f9e1598
     internalID: 0
     vertices: []
     indices: 
@@ -308,17 +286,16 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":80.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":80.0,"y":80.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      attack-idle 80x64_0: -78312976
-      attack-idle 80x64_1: -370057335
-      attack-idle 80x64_2: -243442957
-      attack-idle 80x64_3: -1335762945
-      attack-idle 80x64_4: 662238456
-      attack-idle 80x64_5: -132328691
-      attack-idle 80x64_6: 1438288700
-      attack-idle 80x64_7: 1039696366
-      attack-idle 80x64_8: 122555777
+      attack-run 80x80_0: -576009419
+      attack-run 80x80_1: 589958558
+      attack-run 80x80_2: -239616383
+      attack-run 80x80_3: 1315733260
+      attack-run 80x80_4: -1377291506
+      attack-run 80x80_5: -646097482
+      attack-run 80x80_6: -957219575
+      attack-run 80x80_7: 1375923683
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
