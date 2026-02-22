@@ -281,7 +281,7 @@ Transform:
   m_GameObject: {fileID: 403227141}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.03, y: -0.353, z: 0}
+  m_LocalPosition: {x: -0.017, y: -0.423, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -490,8 +490,8 @@ Transform:
   m_GameObject: {fileID: 1088663170}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.504, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: -0.022, z: 0}
+  m_LocalScale: {x: 2.4407, y: 2.4407, z: 2.4407}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1380380670}
@@ -577,6 +577,59 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &1217343358
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1217343359}
+  - component: {fileID: 1217343360}
+  m_Layer: 0
+  m_Name: Attack Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1217343359
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1217343358}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.39, y: 0, z: 0}
+  m_LocalScale: {x: 0.16915, y: 0.16915, z: 0.16915}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1380380670}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1217343360
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1217343358}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.6670725, y: 4.320266, z: 1}
+  m_Center: {x: -0.83353513, y: -0.29868174, z: 0}
 --- !u!1 &1380380667
 GameObject:
   m_ObjectHideFlags: 0
@@ -615,10 +668,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.17385574
-  m_Height: 0.6200815
+  m_Radius: 0.17688352
+  m_Height: 0.7114197
   m_Direction: 1
-  m_Center: {x: -0.011093325, y: -0.027470334, z: 0}
+  m_Center: {x: -0.018007837, y: -0.055604685, z: 0}
 --- !u!54 &1380380669
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -661,6 +714,7 @@ Transform:
   m_Children:
   - {fileID: 1088663171}
   - {fileID: 403227142}
+  - {fileID: 1217343359}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1380380671
@@ -687,7 +741,9 @@ MonoBehaviour:
     m_Bits: 64
   visualToFlip: {fileID: 1088663171}
   animator: {fileID: 1088663173}
-  apexThreshold: 0.2
+  attackHitbox: {fileID: 1217343360}
+  attackDuration: 0.25
+  knockbackForce: 8
 --- !u!1 &2058878111
 GameObject:
   m_ObjectHideFlags: 0

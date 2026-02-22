@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement3D : MonoBehaviour
@@ -11,9 +12,9 @@ public class PlayerMovement3D : MonoBehaviour
     [SerializeField] private int maxJumps = 2;
     [SerializeField] private float jumpHeight = 2.5f;
 
-    [Header("Feel - Fighting Game")]
-    [SerializeField] private float fallMultiplier = 4f;       // gravity extra saat turun
-    [SerializeField] private float lowJumpMultiplier = 3f;    // gravity extra kalau lepas tombol cepat
+    [Header("Feel")]
+    [SerializeField] private float fallMultiplier = 4f;
+    [SerializeField] private float lowJumpMultiplier = 3f;
 
     [Header("Ground Check")]
     [SerializeField] private Transform groundCheck;
@@ -22,15 +23,35 @@ public class PlayerMovement3D : MonoBehaviour
 
     [Header("Visual")]
     [SerializeField] private Transform visualToFlip;
-    [SerializeField] private Animator animator; // drag animator dari Visual
-    [SerializeField] private float apexThreshold = 0.2f; // untuk tuning
+    [SerializeField] private Animator animator;
 
-    private int jumpCount;
-    private bool jumpHeld;
+    [Header("Attack")]
+    [SerializeField] private Collider attackHitbox;
+    [SerializeField] private float attackDuration = 0.25f;
+    [SerializeField] private float knockbackForce = 8f;
+
     private Rigidbody rb;
     private PlayerInputActions inputActions;
+
     private float moveInput;
     private bool isGrounded;
+    private bool jumpHeld;
+    private int jumpCount;
+
+    private bool isAttacking;
+    private bool canCombo;
+    private AttackType currentAttack = AttackType.None;
+
+    private enum AttackType
+    {
+        None = 0,
+        Idle1 = 1,
+        Idle2 = 2,
+        Run1 = 3,
+        Run2 = 4,
+        Air1 = 5,
+        Air2 = 6
+    }
 
     private void Awake()
     {
@@ -46,13 +67,15 @@ public class PlayerMovement3D : MonoBehaviour
     {
         inputActions.Enable();
         inputActions.Player.Jump.performed += OnJump;
-        inputActions.Player.Jump.canceled += OnJumpReleased; // ← detect lepas tombol
+        inputActions.Player.Jump.canceled += OnJumpReleased;
+        inputActions.Player.Attack.performed += OnAttack;
     }
 
     private void OnDisable()
     {
         inputActions.Player.Jump.performed -= OnJump;
         inputActions.Player.Jump.canceled -= OnJumpReleased;
+        inputActions.Player.Attack.performed -= OnAttack;
         inputActions.Disable();
     }
 
@@ -61,11 +84,15 @@ public class PlayerMovement3D : MonoBehaviour
         Vector2 input = inputActions.Player.Move.ReadValue<Vector2>();
         moveInput = input.x;
 
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
+        isGrounded = Physics.CheckSphere(
+            groundCheck.position,
+            groundCheckRadius,
+            groundLayer
+        );
 
         if (isGrounded) jumpCount = 0;
 
-        // Flip visual
+        // Flip
         if (visualToFlip != null && moveInput != 0)
         {
             Vector3 scale = visualToFlip.localScale;
@@ -73,7 +100,7 @@ public class PlayerMovement3D : MonoBehaviour
             visualToFlip.localScale = scale;
         }
 
-        // Animator params
+        // Animator
         if (animator != null)
         {
             animator.SetFloat("Speed", Mathf.Abs(moveInput));
@@ -84,22 +111,19 @@ public class PlayerMovement3D : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Horizontal movement
         rb.linearVelocity = new Vector3(
             moveInput * moveSpeed,
             rb.linearVelocity.y,
             0f
         );
 
-        // ▼ KUNCI ANTI-FLOATY: tambah gravity extra
+        // Gravity feel
         if (rb.linearVelocity.y < 0f)
         {
-            // Sedang turun → gravity jauh lebih kencang
             rb.linearVelocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1f) * Time.fixedDeltaTime;
         }
         else if (rb.linearVelocity.y > 0f && !jumpHeld)
         {
-            // Naik tapi tombol sudah dilepas → langsung kasih gravity lebih
             rb.linearVelocity += Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1f) * Time.fixedDeltaTime;
         }
     }
@@ -111,8 +135,6 @@ public class PlayerMovement3D : MonoBehaviour
         jumpCount++;
         jumpHeld = true;
 
-        // Hitung velocity dari jumpHeight secara fisik benar
-        // v = sqrt(2 * |gravity| * height)
         float jumpVelocity = Mathf.Sqrt(2f * Mathf.Abs(Physics.gravity.y) * jumpHeight);
 
         Vector3 v = rb.linearVelocity;
@@ -125,10 +147,76 @@ public class PlayerMovement3D : MonoBehaviour
         jumpHeld = false;
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnAttack(InputAction.CallbackContext context)
     {
-        if (groundCheck == null) return;
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        if (isAttacking && !canCombo) return;
+
+        DetermineAttackType();
+        StartCoroutine(AttackRoutine());
+    }
+
+    private void DetermineAttackType()
+    {
+        bool moving = Mathf.Abs(moveInput) > 0.1f;
+
+        if (!isGrounded)
+        {
+            currentAttack = (currentAttack == AttackType.Air1 && canCombo)
+                ? AttackType.Air2
+                : AttackType.Air1;
+        }
+        else if (moving)
+        {
+            currentAttack = (currentAttack == AttackType.Run1 && canCombo)
+                ? AttackType.Run2
+                : AttackType.Run1;
+        }
+        else
+        {
+            currentAttack = (currentAttack == AttackType.Idle1 && canCombo)
+                ? AttackType.Idle2
+                : AttackType.Idle1;
+        }
+    }
+
+    private IEnumerator AttackRoutine()
+    {
+        isAttacking = true;
+        canCombo = false;
+
+        animator.SetBool("IsAttacking", true);
+        animator.SetInteger("AttackType", (int)currentAttack);
+
+        ApplySelfForce();
+
+        attackHitbox.enabled = true;
+
+        yield return new WaitForSeconds(attackDuration * 0.5f);
+
+        canCombo = true;
+
+        yield return new WaitForSeconds(attackDuration * 0.5f);
+
+        attackHitbox.enabled = false;
+
+        isAttacking = false;
+        canCombo = false;
+        currentAttack = AttackType.None;
+
+        animator.SetBool("IsAttacking", false);
+    }
+
+    private void ApplySelfForce()
+    {
+        float dir = Mathf.Sign(visualToFlip.localScale.x);
+
+        if (currentAttack == AttackType.Run1 || currentAttack == AttackType.Run2)
+        {
+            rb.AddForce(new Vector3(dir * 5f, 0f, 0f), ForceMode.Impulse);
+        }
+        else if (currentAttack == AttackType.Air1 || currentAttack == AttackType.Air2)
+        {
+            rb.AddForce(new Vector3(dir * 4f, 2f, 0f), ForceMode.Impulse);
+        }
     }
 }
