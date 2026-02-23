@@ -5,9 +5,10 @@ public class AttackHitbox : MonoBehaviour
     [SerializeField] private CharacterCombat owner;
     [SerializeField] private float damage = 10f;
 
-    private void Reset()
+    private void Awake()
     {
-        owner = GetComponentInParent<CharacterCombat>();
+        if (owner == null)
+            owner = GetComponentInParent<CharacterCombat>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -19,6 +20,8 @@ public class AttackHitbox : MonoBehaviour
         if (target == owner) return;
 
         float force = owner.GetCurrentAttackForce();
+
+        Debug.Log("Force sent: " + force);
 
         target.ApplyHit(owner.transform.position, force, damage);
     }

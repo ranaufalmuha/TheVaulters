@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -87,10 +88,26 @@ public class CharacterMotor : MonoBehaviour
     public void ApplyKnockback(Vector3 direction, float force)
     {
         inKnockback = true;
-        knockTimer = knockControlLockTime;
 
         rb.linearVelocity = Vector3.zero;
-        rb.AddForce(direction * force, ForceMode.Impulse);
+
+        rb.AddForce(
+            new Vector3(direction.x, direction.y * 0.4f, 0f) * force,
+            ForceMode.Impulse
+        );
+
+        StartCoroutine(KnockbackLockRoutine());
+    }
+
+    private IEnumerator KnockbackLockRoutine()
+    {
+        // tunggu sampai menyentuh tanah lagi
+        while (!IsGrounded)
+        {
+            yield return null;
+        }
+
+        inKnockback = false;
     }
 
     // =============================
@@ -120,14 +137,15 @@ public class CharacterMotor : MonoBehaviour
     {
         // 🔥 IMPORTANT
         // Jangan overwrite velocity saat knockback
-        if (!inKnockback)
+        if (inKnockback)
         {
-            rb.linearVelocity = new Vector3(
-                moveInput * moveSpeed,
-                rb.linearVelocity.y,
-                0f
-            );
+            return;
         }
+        rb.linearVelocity = new Vector3(
+            moveInput * moveSpeed,
+            rb.linearVelocity.y,
+            0f
+        );
 
         // Gravity feel
         if (rb.linearVelocity.y < 0f)
