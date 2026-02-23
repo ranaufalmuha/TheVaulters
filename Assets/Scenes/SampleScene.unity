@@ -150,6 +150,107 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &327382495
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 327382499}
+  - component: {fileID: 327382498}
+  - component: {fileID: 327382497}
+  - component: {fileID: 327382496}
+  m_Layer: 5
+  m_Name: Canvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &327382496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327382495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &327382497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327382495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
+  m_UiScaleMode: 0
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 800, y: 600}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
+--- !u!223 &327382498
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327382495}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!224 &327382499
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327382495}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1113,6 +1214,11 @@ MonoBehaviour:
   maxHealth: 100
   slider: {fileID: 1822623725}
   fillImage: {fileID: 1822623724}
+  multGreen: 1
+  multYellow: 1.35
+  multDarkRed: 1.9
+  multAt20: 2.6
+  multAt0: 100000
 --- !u!114 &1137194363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1135,6 +1241,8 @@ MonoBehaviour:
   baseKnockbackAir: 15
   horizontalBias: 1.5
   verticalBias: 0.4
+  ringOutForceAtZeroHP: 65
+  maxKnockbackForce: 48
   hitStunDuration: 0.22
   blockDamageMultiplier: 0.3
   blockForceMultiplier: 0.5
@@ -1189,7 +1297,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStock
   maxLives: 3
   respawnDelay: 7
-  deathYLimit: -15
+  deathBottomY: -45
+  deathTopY: 78
+  deathLeftX: -52
+  deathRightX: 82
   spawnPoint: {fileID: 142054076}
 --- !u!1 &1217343358
 GameObject:
@@ -1366,6 +1477,11 @@ MonoBehaviour:
   maxHealth: 100
   slider: {fileID: 1524579190}
   fillImage: {fileID: 1524579189}
+  multGreen: 1
+  multYellow: 1.35
+  multDarkRed: 1.9
+  multAt20: 2.6
+  multAt0: 100000
 --- !u!114 &1380380673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1388,6 +1504,8 @@ MonoBehaviour:
   baseKnockbackAir: 15
   horizontalBias: 1.5
   verticalBias: 0.4
+  ringOutForceAtZeroHP: 65
+  maxKnockbackForce: 48
   hitStunDuration: 0.22
   blockDamageMultiplier: 0.3
   blockForceMultiplier: 0.5
@@ -1455,7 +1573,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStock
   maxLives: 3
   respawnDelay: 7
-  deathYLimit: -15
+  deathBottomY: -45
+  deathTopY: 78
+  deathLeftX: -52
+  deathRightX: 82
   spawnPoint: {fileID: 142054076}
 --- !u!1001 &1524579187
 PrefabInstance:
@@ -2194,11 +2315,12 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 330585546}
+  - {fileID: 904639034}
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 1380380670}
   - {fileID: 1137194359}
   - {fileID: 2058878115}
-  - {fileID: 904639034}
   - {fileID: 142054076}
   - {fileID: 1670499820}
+  - {fileID: 327382499}

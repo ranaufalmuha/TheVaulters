@@ -31,6 +31,8 @@ public class CharacterCombat : MonoBehaviour
 
     [SerializeField] private float horizontalBias = 2.5f;
     [SerializeField] private float verticalBias = 0.35f;
+    [SerializeField] private float ringOutForceAtZeroHP = 42f;
+    [SerializeField] private float maxKnockbackForce = 48f;
 
     [Header("Hit Stun")]
     [SerializeField] private float hitStunDuration = 0.22f;
@@ -181,8 +183,11 @@ public class CharacterCombat : MonoBehaviour
 
         float multiplier = health.GetKnockbackMultiplier();
         float finalForce = baseForce * multiplier;
+        if (health.CurrentHealth <= 0f)
+            finalForce = Mathf.Max(finalForce, ringOutForceAtZeroHP);
+        finalForce = Mathf.Min(finalForce, maxKnockbackForce);
 
-        float dir = Mathf.Sign(transform.position.x - attackerPosition.x);
+        float dir = transform.position.x >= attackerPosition.x ? 1f : -1f;
         Vector3 knockDir = new Vector3(dir * horizontalBias, verticalBias, 0f);
 
         motor.ResetAirRecovery();

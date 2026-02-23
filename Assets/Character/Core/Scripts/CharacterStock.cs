@@ -8,7 +8,10 @@ public class CharacterStock : MonoBehaviour
     [Header("Stock Settings")]
     [SerializeField] private int maxLives = 3;
     [SerializeField] private float respawnDelay = 7f;
-    [SerializeField] private float deathYLimit = -15f;
+    [SerializeField] private float deathBottomY = -45f;
+    [SerializeField] private float deathTopY = 78f;
+    [SerializeField] private float deathLeftX = -52f;
+    [SerializeField] private float deathRightX = 82f;
 
     [Header("Respawn")]
     [SerializeField] private Transform spawnPoint;
@@ -36,7 +39,14 @@ public class CharacterStock : MonoBehaviour
 
     private void Update()
     {
-        if (!isDead && transform.position.y < deathYLimit)
+        Vector3 p = transform.position;
+        bool outOfArena =
+            p.y < deathBottomY ||
+            p.y > deathTopY ||
+            p.x < deathLeftX ||
+            p.x > deathRightX;
+
+        if (!isDead && outOfArena)
         {
             Die();
         }

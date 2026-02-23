@@ -30,9 +30,9 @@ public class CharacterMotor : MonoBehaviour
     private bool jumpHeld;
 
     private bool inKnockback;
-    private float knockTimer;
 
     public bool IsGrounded { get; private set; }
+    public bool IsInKnockback => inKnockback;
     public float VelocityY => rb.linearVelocity.y;
     public float VelocityX => rb.linearVelocity.x;
 
@@ -52,11 +52,18 @@ public class CharacterMotor : MonoBehaviour
 
     public void SetMoveInput(float input)
     {
+        if (inKnockback)
+        {
+            moveInput = 0f;
+            return;
+        }
+
         moveInput = input;
     }
 
     public void Jump()
     {
+        if (inKnockback) return;
         if (jumpCount >= maxJumps) return;
 
         jumpCount++;
@@ -72,6 +79,7 @@ public class CharacterMotor : MonoBehaviour
 
     public void ReleaseJump()
     {
+        if (inKnockback) return;
         jumpHeld = false;
     }
 
@@ -91,8 +99,10 @@ public class CharacterMotor : MonoBehaviour
 
         rb.linearVelocity = Vector3.zero;
 
+        Vector3 launchDir = new Vector3(direction.x, Mathf.Max(direction.y, 0.25f), 0f).normalized;
+
         rb.AddForce(
-            new Vector3(direction.x, direction.y * 0.4f, 0f) * force,
+            launchDir * force,
             ForceMode.Impulse
         );
 
@@ -101,7 +111,9 @@ public class CharacterMotor : MonoBehaviour
 
     private IEnumerator KnockbackLockRoutine()
     {
-        // tunggu sampai menyentuh tanah lagi
+        if (knockControlLockTime > 0f)
+            yield return new WaitForSeconds(knockControlLockTime);
+
         while (!IsGrounded)
         {
             yield return null;
@@ -124,13 +136,6 @@ public class CharacterMotor : MonoBehaviour
 
         if (IsGrounded)
             jumpCount = 0;
-
-        if (inKnockback)
-        {
-            knockTimer -= Time.deltaTime;
-            if (knockTimer <= 0f)
-                inKnockback = false;
-        }
     }
 
     private void FixedUpdate()
@@ -139,6 +144,7 @@ public class CharacterMotor : MonoBehaviour
         // Jangan overwrite velocity saat knockback
         if (inKnockback)
         {
+            moveInput = 0f;
             return;
         }
         rb.linearVelocity = new Vector3(
