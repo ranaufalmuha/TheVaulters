@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using TMPro;
 
 [RequireComponent(typeof(CharacterMotor))]
 [RequireComponent(typeof(CharacterCombat))]
@@ -15,6 +16,11 @@ public class CharacterStock : MonoBehaviour
 
     [Header("Respawn")]
     [SerializeField] private Transform spawnPoint;
+
+    [Header("UI")]
+    [SerializeField] private TMP_Text healthLeftText;
+    [SerializeField] private GameObject respawnPanel;
+    [SerializeField] private TMP_Text respawnTimeText;
 
     private CharacterMotor motor;
     private CharacterCombat combat;
@@ -35,6 +41,10 @@ public class CharacterStock : MonoBehaviour
         colliders = GetComponentsInChildren<Collider>();
 
         currentLives = maxLives;
+        UpdateHealthLeftUI();
+
+        if (respawnPanel != null)
+            respawnPanel.SetActive(false);
     }
 
     private void Update()
@@ -60,10 +70,12 @@ public class CharacterStock : MonoBehaviour
         isDead = true;
 
         Debug.Log(name + " KO! Lives left: " + currentLives);
+        UpdateHealthLeftUI();
 
         if (currentLives <= 0)
         {
             Debug.Log(name + " OUT OF STOCK! GAME OVER.");
+            if (respawnPanel != null) respawnPanel.SetActive(false);
             return;
         }
 
@@ -84,14 +96,23 @@ public class CharacterStock : MonoBehaviour
 
     private IEnumerator RespawnRoutine()
     {
+        if (respawnPanel != null)
+            respawnPanel.SetActive(true);
+
         float timer = respawnDelay;
 
         while (timer > 0)
         {
-            Debug.Log(name + " Respawn in: " + Mathf.Ceil(timer));
-            timer -= 1f;
-            yield return new WaitForSeconds(1f);
+            int secondsLeft = Mathf.CeilToInt(timer);
+            if (respawnTimeText != null)
+                respawnTimeText.text = secondsLeft.ToString();
+
+            timer -= Time.deltaTime;
+            yield return null;
         }
+
+        if (respawnTimeText != null)
+            respawnTimeText.text = "0";
 
         Respawn();
     }
@@ -113,5 +134,14 @@ public class CharacterStock : MonoBehaviour
         combat.enabled = true;
 
         isDead = false;
+
+        if (respawnPanel != null)
+            respawnPanel.SetActive(false);
+    }
+
+    private void UpdateHealthLeftUI()
+    {
+        if (healthLeftText == null) return;
+        healthLeftText.text = Mathf.Max(0, currentLives).ToString();
     }
 }
