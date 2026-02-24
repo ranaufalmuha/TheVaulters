@@ -1,11 +1,14 @@
 using UnityEngine;
 using System.Collections;
+using System;
 using TMPro;
 
 [RequireComponent(typeof(CharacterMotor))]
 [RequireComponent(typeof(CharacterCombat))]
 public class CharacterStock : MonoBehaviour
 {
+    public static event Action<CharacterStock> OnOutOfStock;
+
     [Header("Stock Settings")]
     [SerializeField] private int maxLives = 3;
     [SerializeField] private float respawnDelay = 7f;
@@ -32,6 +35,7 @@ public class CharacterStock : MonoBehaviour
 
     public int Lives => currentLives;
     public bool IsDead => isDead;
+    public bool IsOutOfStock => currentLives <= 0;
 
     private void Awake()
     {
@@ -76,20 +80,12 @@ public class CharacterStock : MonoBehaviour
         {
             Debug.Log(name + " OUT OF STOCK! GAME OVER.");
             if (respawnPanel != null) respawnPanel.SetActive(false);
+            DisableCharacterControlAndPhysics();
+            OnOutOfStock?.Invoke(this);
             return;
         }
 
-        // Disable control
-        motor.enabled = false;
-        combat.enabled = false;
-
-        // Stop physics
-        rb.linearVelocity = Vector3.zero;
-        rb.isKinematic = true;
-
-        // Disable colliders
-        foreach (var col in colliders)
-            col.enabled = false;
+        DisableCharacterControlAndPhysics();
 
         StartCoroutine(RespawnRoutine());
     }
@@ -143,5 +139,31 @@ public class CharacterStock : MonoBehaviour
     {
         if (healthLeftText == null) return;
         healthLeftText.text = Mathf.Max(0, currentLives).ToString();
+    }
+
+    public void FreezeForMatchEnd()
+    {
+        StopAllCoroutines();
+        if (respawnPanel != null)
+            respawnPanel.SetActive(false);
+
+        DisableCharacterControlAndPhysics();
+        isDead = true;
+    }
+
+    private void DisableCharacterControlAndPhysics()
+    {
+        if (motor != null) motor.enabled = false;
+        if (combat != null) combat.enabled = false;
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
+
+        if (colliders == null) return;
+        foreach (var col in colliders)
+            col.enabled = false;
     }
 }
