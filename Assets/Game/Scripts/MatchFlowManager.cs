@@ -1,7 +1,16 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
+using Solana.Unity.Rpc.Models;
+using Solana.Unity.Wallet;
+using Solana.Unity.Rpc.Types;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Web3.Core;
+using Web3.Programs;
+using Web3.Utils;
+using Web3.Wallet;
 
 public class MatchFlowManager : MonoBehaviour
 {
@@ -21,6 +30,11 @@ public class MatchFlowManager : MonoBehaviour
 
     private float remainingTime;
     private bool isMatchEnded;
+    private ulong currentMatchId;
+    private PublicKey currentMatchPda;
+    private bool createMatchSucceeded;
+    private bool finalizeSubmitted;
+    private Task pendingFinalizeTask;
 
     private void Awake()
     {
@@ -32,6 +46,13 @@ public class MatchFlowManager : MonoBehaviour
 
         if (resultPanel != null)
             resultPanel.SetActive(false);
+    }
+
+    private void Start()
+    {
+        Web3Manager.Init();
+        pendingFinalizeTask = Task.CompletedTask;
+        _ = BeginMatchChainFlowAsync();
     }
 
     private void OnEnable()
@@ -142,12 +163,30 @@ public class MatchFlowManager : MonoBehaviour
         if (resultText != null)
             resultText.text = result;
 
+        if (createMatchSucceeded && !finalizeSubmitted)
+        {
+            finalizeSubmitted = true;
+            pendingFinalizeTask = FinalizeMatchSafeAsync();
+        }
+
         StartCoroutine(ReturnToMainMenuRoutine());
     }
 
     private IEnumerator ReturnToMainMenuRoutine()
     {
         yield return new WaitForSecondsRealtime(returnToMenuDelaySeconds);
+
+        float finalizeWaitTimeoutSeconds = 8f;
+        while (pendingFinalizeTask != null && !pendingFinalizeTask.IsCompleted && finalizeWaitTimeoutSeconds > 0f)
+        {
+            finalizeWaitTimeoutSeconds -= Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (pendingFinalizeTask != null && !pendingFinalizeTask.IsCompleted)
+        {
+            Debug.LogWarning("FinalizeMatch is still pending. Returning to menu.");
+        }
 
         Time.timeScale = 1f;
 
@@ -202,5 +241,152 @@ public class MatchFlowManager : MonoBehaviour
         if (timePanel == null) return;
 
         timerText = timePanel.GetComponentInChildren<TMP_Text>(true);
+    }
+
+    public async Task<string> CreateMatch()
+    {
+        currentMatchId = (ulong)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        currentMatchPda = PDAUtils.GetMatchPDA(currentMatchId, MatchProgram.ProgramId);
+        PublicKey playerProfile = PDAUtils.GetPlayerProfilePDA(WalletManager.MainAccount.PublicKey, PlayerProgram.ProgramId);
+        // Anchor optional account sentinel: pass current program id to represent None.
+        PublicKey optionalPlayerB = MatchProgram.ProgramId;
+
+        TransactionInstruction ix = MatchProgram.CreateMatch(
+            currentMatchPda,
+            WalletManager.SessionAccount.PublicKey,
+            playerProfile,
+            optionalPlayerB,
+            currentMatchId,
+            true);
+
+        string signature = await SendSessionTransaction(ix, WalletManager.SessionAccount);
+        Debug.Log("CreateMatch tx signature: " + signature);
+        return signature;
+    }
+
+    public async Task<string> FinalizeMatch()
+    {
+        if (currentMatchId == 0UL)
+        {
+            currentMatchId = (ulong)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        }
+
+        if (currentMatchPda == null)
+        {
+            currentMatchPda = PDAUtils.GetMatchPDA(currentMatchId, MatchProgram.ProgramId);
+        }
+
+        PublicKey playerProfile = PDAUtils.GetPlayerProfilePDA(WalletManager.MainAccount.PublicKey, PlayerProgram.ProgramId);
+        // Anchor optional account sentinel: pass current program id to represent None.
+        PublicKey optionalPlayerB = MatchProgram.ProgramId;
+        bool playerAWin = enemyStock != null && enemyStock.IsOutOfStock;
+        TransactionInstruction ix = MatchProgram.FinalizeMatch(
+            currentMatchPda,
+            playerProfile,
+            optionalPlayerB,
+            WalletManager.SessionAccount.PublicKey,
+            playerAWin);
+
+        string signature = await SendSessionTransaction(ix, WalletManager.SessionAccount);
+        Debug.Log("FinalizeMatch tx signature: " + signature);
+        return signature;
+    }
+
+    private async Task BeginMatchChainFlowAsync()
+    {
+        if (WalletManager.MainAccount == null || WalletManager.SessionAccount == null)
+        {
+            Debug.LogWarning("Wallet/session missing in Match scene. Match tx flow is disabled.");
+            createMatchSucceeded = false;
+            return;
+        }
+
+        try
+        {
+            string sig = await CreateMatch();
+            createMatchSucceeded = !string.IsNullOrEmpty(sig);
+        }
+        catch (System.Exception ex)
+        {
+            createMatchSucceeded = false;
+            Debug.LogError("CreateMatch failed: " + ex.Message);
+        }
+    }
+
+    private async Task FinalizeMatchSafeAsync()
+    {
+        try
+        {
+            string sig = await FinalizeMatch();
+            if (string.IsNullOrEmpty(sig))
+            {
+                Debug.LogWarning("FinalizeMatch returned empty signature.");
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("FinalizeMatch failed: " + ex.Message);
+        }
+    }
+
+    private static async Task<string> SendSessionTransaction(TransactionInstruction instruction, Account signer)
+    {
+        var tx = new Transaction
+        {
+            FeePayer = signer.PublicKey,
+            RecentBlockHash = await Web3Manager.GetRecentBlockhashAsync(),
+            Instructions = new List<TransactionInstruction>(),
+            Signatures = new List<SignaturePubKeyPair>()
+        };
+
+        AddInstruction(tx, instruction);
+        tx.Sign(signer);
+
+        var txResult = await Web3Manager.Rpc.SendTransactionAsync(
+            tx.Serialize(),
+            false,
+            Commitment.Confirmed);
+
+        if (txResult == null || !txResult.WasSuccessful || string.IsNullOrEmpty(txResult.Result))
+        {
+            string reason = txResult != null ? txResult.Reason : "null response";
+            Debug.LogError("Transaction failed: " + reason);
+            return string.Empty;
+        }
+
+        return txResult.Result;
+    }
+
+    private static async Task<string> SendMainWalletTransaction(TransactionInstruction instruction)
+    {
+        var tx = new Transaction
+        {
+            FeePayer = WalletManager.MainAccount.PublicKey,
+            RecentBlockHash = await Web3Manager.GetRecentBlockhashAsync(),
+            Instructions = new List<TransactionInstruction>(),
+            Signatures = new List<SignaturePubKeyPair>()
+        };
+
+        tx.Add(instruction);
+        Transaction signed = await WalletManager.SignTransactionWithMainWallet(tx);
+
+        var txResult = await Web3Manager.Rpc.SendTransactionAsync(
+            signed.Serialize(),
+            false,
+            Commitment.Confirmed);
+
+        if (txResult == null || !txResult.WasSuccessful || string.IsNullOrEmpty(txResult.Result))
+        {
+            string reason = txResult != null ? txResult.Reason : "null response";
+            Debug.LogError("Main wallet transaction failed: " + reason);
+            return string.Empty;
+        }
+
+        return txResult.Result;
+    }
+
+    private static void AddInstruction(Transaction tx, TransactionInstruction instruction)
+    {
+        tx.Add(instruction);
     }
 }
