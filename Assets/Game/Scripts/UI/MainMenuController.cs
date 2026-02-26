@@ -17,12 +17,15 @@ using Web3.Wallet;
 
 public class MainMenuController : MonoBehaviour
 {
-    private const ulong SessionFundingLamports = 200000; // 0.0002 SOL
+    private const ulong SessionFundingLamports = 10000000; // 0.01 SOL
     private const ulong MinMainWalletFeeBufferLamports = 20000;
+    private const ulong MinOwnerLamports = 5000000; // 0.005 SOL safety for init/login/delegate/fund txs
+    private const string MagicBlockRollupPublicKey = "MAS1Dt9qreoRMQ14YQuhg8UTZMMzDdKhmkZMECCzk57";
 
     [SerializeField] private string playSceneName = "SampleScene";
     [SerializeField] private TMP_Text walletAddressText;
     [SerializeField] private TMP_Text usernameText;
+    [SerializeField] private TMP_Text mmrText;
     [SerializeField] private TMP_Text xpText;
     [SerializeField] private TMP_Text levelText;
     [SerializeField] private TMP_Text solBalanceText;
@@ -84,6 +87,7 @@ public class MainMenuController : MonoBehaviour
             Debug.Log("Session public key: " + WalletManager.SessionAccount.PublicKey);
 
             _profilePda = PDAUtils.GetPlayerProfilePDA(WalletManager.MainAccount.PublicKey, PlayerProgram.ProgramId);
+            await EnsureOwnerHasFundingAsync(WalletManager.MainAccount.PublicKey);
 
             await UpdateSolBalanceAsync();
             bool profileExists = await TryLoadProfileAndUpdateUiAsync();
@@ -150,6 +154,8 @@ public class MainMenuController : MonoBehaviour
                 _profilePda = PDAUtils.GetPlayerProfilePDA(WalletManager.MainAccount.PublicKey, PlayerProgram.ProgramId);
             }
 
+            await EnsureOwnerHasFundingAsync(WalletManager.MainAccount.PublicKey);
+
             var ix = BuildInitializePlayerInstruction(_profilePda, WalletManager.MainAccount.PublicKey, username);
             string signature = await SendMainWalletInstructionAsync(ix);
             Debug.Log("Initialize player tx signature: " + signature);
@@ -192,25 +198,36 @@ public class MainMenuController : MonoBehaviour
         PublicKey session = WalletManager.SessionAccount.PublicKey;
         long expiry = System.DateTimeOffset.UtcNow.ToUnixTimeSeconds() + 86400;
 
+        var instructions = new List<TransactionInstruction>();
+
         TransactionInstruction setSessionIx = PlayerProgram.SetSessionKey(
             profile,
             owner,
             session,
             expiry);
+        instructions.Add(setSessionIx);
 
-        string setSessionSig = await SendMainWalletInstructionAsync(setSessionIx);
-        Debug.Log("SetSessionKey tx signature: " + setSessionSig);
+        ulong sessionLamports = await GetBalanceLamportsAsync(session);
+        if (sessionLamports < SessionFundingLamports)
+        {
+            ulong topUpLamports = SessionFundingLamports - sessionLamports;
+            instructions.Add(SystemProgram.Transfer(owner, session, topUpLamports));
+        }
 
-        await EnsureSessionHasFundingAsync(owner, session);
-        return setSessionSig;
+        TransactionInstruction delegateIx = PlayerProgram.Delegate(
+            profile,
+            owner,
+            new PublicKey(MagicBlockRollupPublicKey));
+        instructions.Add(delegateIx);
+
+        string bundledSig = await SendMainWalletInstructionsAsync(instructions);
+        Debug.Log("Login bundle tx signature: " + bundledSig + " (set_session_key + funding(if needed) + delegate_profile)");
+        return bundledSig;
     }
 
     private static async Task EnsureSessionHasFundingAsync(PublicKey owner, PublicKey session)
     {
-        var sessionBalanceRes = await Web3Manager.Rpc.GetBalanceAsync(session.Key, Commitment.Confirmed);
-        ulong sessionLamports = sessionBalanceRes != null && sessionBalanceRes.WasSuccessful && sessionBalanceRes.Result != null
-            ? (ulong)sessionBalanceRes.Result.Value
-            : 0UL;
+        ulong sessionLamports = await GetBalanceLamportsAsync(session);
 
         if (sessionLamports >= SessionFundingLamports)
         {
@@ -218,10 +235,7 @@ public class MainMenuController : MonoBehaviour
         }
 
         ulong topUpLamports = SessionFundingLamports - sessionLamports;
-        var ownerBalanceRes = await Web3Manager.Rpc.GetBalanceAsync(owner.Key, Commitment.Confirmed);
-        ulong ownerLamports = ownerBalanceRes != null && ownerBalanceRes.WasSuccessful && ownerBalanceRes.Result != null
-            ? (ulong)ownerBalanceRes.Result.Value
-            : 0UL;
+        ulong ownerLamports = await GetBalanceLamportsAsync(owner);
 
         ulong needed = topUpLamports + MinMainWalletFeeBufferLamports;
         if (ownerLamports < needed)
@@ -236,6 +250,39 @@ public class MainMenuController : MonoBehaviour
         Debug.Log("FundSession tx signature: " + fundSig + " (" + topUpLamports + " lamports)");
     }
 
+    private static async Task EnsureOwnerHasFundingAsync(PublicKey owner)
+    {
+        ulong ownerLamports = await GetBalanceLamportsAsync(owner);
+
+        if (ownerLamports >= MinOwnerLamports)
+        {
+            return;
+        }
+
+        ulong needed = MinOwnerLamports - ownerLamports;
+        Debug.LogWarning("Owner balance is low (" + ownerLamports + " lamports). Requesting devnet airdrop...");
+        var airdropRes = await Web3Manager.Rpc.RequestAirdropAsync(owner.Key, needed, Commitment.Confirmed);
+        if (airdropRes == null || !airdropRes.WasSuccessful || string.IsNullOrEmpty(airdropRes.Result))
+        {
+            string reason = airdropRes != null ? airdropRes.Reason : "null response";
+            throw new InvalidOperationException(
+                "Low wallet SOL and airdrop failed. Add SOL manually. Reason: " + reason);
+        }
+
+        Debug.Log("Airdrop tx signature: " + airdropRes.Result + " (" + needed + " lamports)");
+    }
+
+    private static async Task<ulong> GetBalanceLamportsAsync(PublicKey address)
+    {
+        var res = await Web3Manager.Rpc.GetBalanceAsync(address.Key, Commitment.Confirmed);
+        if (res == null || !res.WasSuccessful || res.Result == null)
+        {
+            return 0UL;
+        }
+
+        return (ulong)res.Result.Value;
+    }
+
     private static async Task<string> SendMainWalletInstructionAsync(TransactionInstruction instruction)
     {
         return await SendMainWalletInstructionsAsync(new List<TransactionInstruction> { instruction });
@@ -243,32 +290,47 @@ public class MainMenuController : MonoBehaviour
 
     private static async Task<string> SendMainWalletInstructionsAsync(List<TransactionInstruction> instructions)
     {
-        var tx = new Transaction
+        const int maxAttempts = 3;
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
-            FeePayer = WalletManager.MainAccount.PublicKey,
-            RecentBlockHash = await Web3Manager.GetRecentBlockhashAsync(),
-            Instructions = new List<TransactionInstruction>(),
-            Signatures = new List<SignaturePubKeyPair>()
-        };
+            var tx = new Transaction
+            {
+                FeePayer = WalletManager.MainAccount.PublicKey,
+                RecentBlockHash = await Web3Manager.GetRecentBlockhashAsync(),
+                Instructions = new List<TransactionInstruction>(),
+                Signatures = new List<SignaturePubKeyPair>()
+            };
 
-        for (int i = 0; i < instructions.Count; i++)
-        {
-            tx.Add(instructions[i]);
-        }
-        Transaction signed = await WalletManager.SignTransactionWithMainWallet(tx);
+            for (int i = 0; i < instructions.Count; i++)
+            {
+                tx.Add(instructions[i]);
+            }
 
-        var txResult = await Web3Manager.Rpc.SendTransactionAsync(
-            signed.Serialize(),
-            false,
-            Commitment.Confirmed);
+            Transaction signed = await WalletManager.SignTransactionWithMainWallet(tx);
+            if (signed == null)
+            {
+                throw new InvalidOperationException("Transaction signing cancelled");
+            }
 
-        if (txResult == null || !txResult.WasSuccessful || string.IsNullOrEmpty(txResult.Result))
-        {
+            var txResult = await Web3Manager.Rpc.SendTransactionAsync(
+                signed.Serialize(),
+                false,
+                Commitment.Confirmed);
+
+            if (txResult != null && txResult.WasSuccessful && !string.IsNullOrEmpty(txResult.Result))
+            {
+                return txResult.Result;
+            }
+
             string reason = txResult != null ? txResult.Reason : "null response";
-            throw new InvalidOperationException("Main wallet transaction failed: " + reason);
+            bool canRetry = reason != null && reason.IndexOf("Blockhash not found", StringComparison.OrdinalIgnoreCase) >= 0;
+            if (!canRetry || attempt == maxAttempts - 1)
+            {
+                throw new InvalidOperationException("Main wallet transaction failed: " + reason);
+            }
         }
 
-        return txResult.Result;
+        throw new InvalidOperationException("Main wallet transaction failed after retries.");
     }
 
     private async Task<bool> TryLoadProfileAndUpdateUiAsync()
@@ -290,6 +352,7 @@ public class MainMenuController : MonoBehaviour
 
         if (walletAddressText != null) walletAddressText.text = WalletManager.MainAccount.PublicKey.Key;
         if (usernameText != null) usernameText.text = profile.Username;
+        if (mmrText != null) mmrText.text = profile.Mmr.ToString();
         if (xpText != null) xpText.text = profile.Xp.ToString();
         if (levelText != null) levelText.text = profile.Level.ToString();
 

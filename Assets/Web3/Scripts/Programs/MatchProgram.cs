@@ -9,7 +9,7 @@ namespace Web3.Programs
     public static class MatchProgram
     {
         private const string PlaceholderProgramId = "REPLACE_WITH_MATCH_PROGRAM_ID";
-        public const string ProgramIdString = "9svVShMuNXjo8Fqsg6zrBTHy7r14e7pMsuca6ZCbiimy";
+        public const string ProgramIdString = "HjSbgWXcGaWnaj4x3RVvK38edxkWsomMrHdb1f77yx3a";
         public static PublicKey ProgramId => GetProgramId();
 
         public static TransactionInstruction CreateMatch(
@@ -35,9 +35,9 @@ namespace Web3.Programs
             };
         }
 
-        public static TransactionInstruction FinalizeMatch(
+        public static TransactionInstruction CommitMatch(
             PublicKey matchAccount,
-            PublicKey playerAProfile,
+            PublicKey playerProfile,
             PublicKey playerBProfileOrNullProgramId,
             PublicKey signer,
             bool playerAWin)
@@ -48,12 +48,11 @@ namespace Web3.Programs
                 Keys = new List<AccountMeta>
                 {
                     AccountMeta.Writable(matchAccount, false),
-                    AccountMeta.Writable(playerAProfile, false),
-                    AccountMeta.Writable(playerBProfileOrNullProgramId, false),
-                    AccountMeta.ReadOnly(signer, true),
-                    AccountMeta.ReadOnly(PlayerProgram.ProgramId, false)
+                    AccountMeta.Writable(playerProfile, false),
+                    AccountMeta.ReadOnly(playerBProfileOrNullProgramId, false),
+                    AccountMeta.ReadOnly(signer, true)
                 },
-                Data = AnchorUtils.BuildFinalizeMatchData(playerAWin)
+                Data = AnchorUtils.BuildCommitMatchData(playerAWin)
             };
         }
 

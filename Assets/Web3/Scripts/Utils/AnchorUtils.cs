@@ -42,6 +42,71 @@ namespace Web3.Utils
             return BuildAnchorInstructionData("finalize_match", playerAWinBytes);
         }
 
+        public static byte[] BuildDelegateData(byte[] rollup)
+        {
+            if (rollup == null || rollup.Length == 0)
+            {
+                throw new ArgumentException("Rollup pubkey bytes are required.", nameof(rollup));
+            }
+
+            return BuildAnchorInstructionData("delegate_profile", rollup);
+        }
+
+        public static byte[] BuildUndelegateData()
+        {
+            return BuildAnchorInstructionData("undelegate_profile");
+        }
+
+        public static byte[] BuildCommitMatchData(bool playerAWin)
+        {
+            byte[] playerAWinBytes = { playerAWin ? (byte)1 : (byte)0 };
+            return BuildAnchorInstructionData("commit_match", playerAWinBytes);
+        }
+
+        public static byte[] BuildUpdateMmrData(long delta)
+        {
+            byte[] deltaBytes = BitConverter.GetBytes(delta);
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(deltaBytes);
+            }
+
+            return BuildAnchorInstructionData("update_mmr", deltaBytes);
+        }
+
+        public static byte[] BuildGainXpData(ulong amount)
+        {
+            byte[] amountBytes = BitConverter.GetBytes(amount);
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(amountBytes);
+            }
+
+            return BuildAnchorInstructionData("gain_xp", amountBytes);
+        }
+
+        public static byte[] BuildAddXpData(ulong amount)
+        {
+            byte[] amountBytes = BitConverter.GetBytes(amount);
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(amountBytes);
+            }
+
+            return BuildAnchorInstructionData("add_xp", amountBytes);
+        }
+
+        public static byte[] BuildGainLevelData(ulong amount)
+        {
+            byte[] amountBytes = BitConverter.GetBytes(amount);
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(amountBytes);
+            }
+
+            return BuildAnchorInstructionData("gain_level", amountBytes);
+        }
+
         private static byte[] BuildAnchorInstructionData(string instructionName, params byte[][] payloadChunks)
         {
             byte[] discriminator = BuildDiscriminator(instructionName);

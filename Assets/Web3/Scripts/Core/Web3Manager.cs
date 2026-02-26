@@ -3,17 +3,37 @@ using System.Threading.Tasks;
 using Solana.Unity.Rpc;
 using Solana.Unity.Rpc.Core.Http;
 using Solana.Unity.Rpc.Types;
+using UnityEngine;
 
 namespace Web3.Core
 {
     public static class Web3Manager
     {
+        public const string DevnetRouterUrl = "https://devnet-router.magicblock.app";
+        public const bool UseMagicBlockRouter = false;
         public static IRpcClient Rpc { get; private set; }
 
         public static void Init()
         {
             if (Rpc != null) return;
-            Rpc = ClientFactory.GetClient(Cluster.DevNet);
+
+            if (!UseMagicBlockRouter)
+            {
+                Rpc = ClientFactory.GetClient(Cluster.DevNet);
+                Debug.Log("Web3 RPC initialized: Solana Devnet");
+                return;
+            }
+
+            try
+            {
+                Rpc = ClientFactory.GetClient(DevnetRouterUrl);
+                Debug.Log("Web3 RPC initialized: " + DevnetRouterUrl);
+            }
+            catch
+            {
+                Rpc = ClientFactory.GetClient(Cluster.DevNet);
+                Debug.LogWarning("Falling back to Solana Devnet RPC.");
+            }
         }
 
         public static async Task<string> GetRecentBlockhashAsync(Commitment commitment = Commitment.Confirmed)
