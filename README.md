@@ -9,7 +9,8 @@
   <img alt="Unity" src="https://img.shields.io/badge/Unity_6-111111?style=for-the-badge&logo=unity&logoColor=white" />
 </p>
 
-- Smart contract repo: `https://github.com/ranaufalmuha/vaulters-contract`
+- [Try the Game : https://play.unity.com/en/games/c551f80d-a2c6-4376-899d-24cc5b2beeda/vaulters](https://play.unity.com/en/games/c551f80d-a2c6-4376-899d-24cc5b2beeda/vaulters)
+- [Smart contract repo : https://github.com/ranaufalmuha/vaulters-contract](https://github.com/ranaufalmuha/vaulters-contract)
 - `vaulters_player`: `A4WGoXEELbB7iAaaa2oNQHCtuirB4cfvDeAYsA7v8yTa`
 - `vaulters_match`: `HjSbgWXcGaWnaj4x3RVvK38edxkWsomMrHdb1f77yx3a`
 
