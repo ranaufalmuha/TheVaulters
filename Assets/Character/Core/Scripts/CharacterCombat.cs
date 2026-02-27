@@ -23,7 +23,8 @@ public class CharacterCombat : MonoBehaviour
     [SerializeField] private AttackTiming airAttack2Timing = new AttackTiming(0.12f, 0.12f);
     [SerializeField] private float comboWindow = 0.28f;
     [SerializeField] private float comboCooldown = 0.16f;
-    [SerializeField] private Vector2 airAttack2Impulse = new Vector2(3.5f, 4.5f);
+    [SerializeField] private Vector2 airAttack1Impulse = new Vector2(3f, 5f);
+    [SerializeField] private Vector2 airAttack2Impulse = new Vector2(4.5f, 6f);
 
     [Header("Damage/Knockback")]
     [SerializeField] private float baseKnockbackGround = 14f;
@@ -53,6 +54,8 @@ public class CharacterCombat : MonoBehaviour
     private bool queuedComboAttack;
     private float comboTimer;
     private float cooldownTimer;
+    private bool airAttack1Used;
+    private bool airAttack2Used;
 
     private AttackType lastAttackType = AttackType.None;
     private AttackType currentAttackType = AttackType.None;
@@ -73,6 +76,11 @@ public class CharacterCombat : MonoBehaviour
 
     private void Update()
     {
+        if (motor.IsGrounded)
+        {
+            ResetAirAttackUsage();
+        }
+
         if (cooldownTimer > 0f)
         {
             cooldownTimer -= Time.deltaTime;
@@ -126,7 +134,15 @@ public class CharacterCombat : MonoBehaviour
         bool continueCombo = canCombo && comboTimer > 0f;
 
         if (!grounded)
-            return continueCombo && lastAttackType == AttackType.Air1 ? AttackType.Air2 : AttackType.Air1;
+        {
+            if (continueCombo && lastAttackType == AttackType.Air1 && !airAttack2Used)
+                return AttackType.Air2;
+
+            if (!airAttack1Used)
+                return AttackType.Air1;
+
+            return AttackType.None;
+        }
 
         return continueCombo && lastAttackType == AttackType.Ground1 ? AttackType.Ground2 : AttackType.Ground1;
     }
@@ -145,9 +161,19 @@ public class CharacterCombat : MonoBehaviour
         lastAttackType = type;
         currentAttackType = type;
 
-        if (type == AttackType.Air2)
+        if (type == AttackType.Air1)
         {
-            Vector2 impulse = new Vector2(airAttack2Impulse.x * visual.FacingSign, airAttack2Impulse.y);
+            airAttack1Used = true;
+        }
+        else if (type == AttackType.Air2)
+        {
+            airAttack2Used = true;
+        }
+
+        if (type == AttackType.Air1 || type == AttackType.Air2)
+        {
+            Vector2 baseImpulse = type == AttackType.Air1 ? airAttack1Impulse : airAttack2Impulse;
+            Vector2 impulse = new Vector2(baseImpulse.x * visual.FacingSign, baseImpulse.y);
             motor.ApplyAttackImpulse(impulse);
         }
 
@@ -228,6 +254,7 @@ public class CharacterCombat : MonoBehaviour
         motor.ApplyKnockback(knockDir, finalForce);
 
         ResetComboState(startCooldown: false);
+        ResetAirAttackUsage();
         currentAttackType = AttackType.None;
         visual.PlayHurt();
         StartCoroutine(HitStunRoutine());
@@ -287,6 +314,12 @@ public class CharacterCombat : MonoBehaviour
         {
             cooldownTimer = comboCooldown;
         }
+    }
+
+    private void ResetAirAttackUsage()
+    {
+        airAttack1Used = false;
+        airAttack2Used = false;
     }
 
     [System.Serializable]

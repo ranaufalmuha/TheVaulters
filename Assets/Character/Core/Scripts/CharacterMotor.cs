@@ -12,8 +12,7 @@ public class CharacterMotor : MonoBehaviour
     public float jumpHeight = 2.5f;
 
     [Header("Feel")]
-    public float fallMultiplier = 4f;
-    public float lowJumpMultiplier = 3f;
+    public float airGravityMultiplier = 4f;
     public float attackLiftAssistTime = 0.12f;
 
     [Header("Ground Check")]
@@ -28,7 +27,6 @@ public class CharacterMotor : MonoBehaviour
 
     private float moveInput;
     private int jumpCount;
-    private bool jumpHeld;
     private float attackLiftAssistTimer;
 
     private bool inKnockback;
@@ -69,10 +67,10 @@ public class CharacterMotor : MonoBehaviour
         if (jumpCount >= maxJumps) return;
 
         jumpCount++;
-        jumpHeld = true;
 
+        float effectiveGravity = Mathf.Abs(Physics.gravity.y) * Mathf.Max(airGravityMultiplier, 0.01f);
         float jumpVelocity =
-            Mathf.Sqrt(2f * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+            Mathf.Sqrt(2f * effectiveGravity * jumpHeight);
 
         Vector3 v = rb.linearVelocity;
         v.y = jumpVelocity;
@@ -81,14 +79,12 @@ public class CharacterMotor : MonoBehaviour
 
     public void ReleaseJump()
     {
-        if (inKnockback) return;
-        jumpHeld = false;
+        // Jump height is fixed; button release does not change ascent.
     }
 
     public void ResetAirRecovery()
     {
         jumpCount = 0;
-        jumpHeld = false;
         attackLiftAssistTimer = 0f;
     }
 
@@ -183,15 +179,10 @@ public class CharacterMotor : MonoBehaviour
             0f
         );
 
-        // Gravity feel
-        if (rb.linearVelocity.y < 0f)
+        // Apply the same gravity multiplier during ascent and descent.
+        if (!Mathf.Approximately(airGravityMultiplier, 1f))
         {
-            rb.linearVelocity += (fallMultiplier - 1f) * Physics.gravity.y * Time.fixedDeltaTime * Vector3.up;
-        }
-        else if (rb.linearVelocity.y > 0f && !jumpHeld && attackLiftAssistTimer <= 0f)
-        {
-            rb.linearVelocity +=
-                (lowJumpMultiplier - 1f) * Physics.gravity.y * Time.fixedDeltaTime * Vector3.up;
+            rb.linearVelocity += (airGravityMultiplier - 1f) * Physics.gravity.y * Time.fixedDeltaTime * Vector3.up;
         }
     }
 }
