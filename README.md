@@ -9,6 +9,10 @@
   <img alt="Unity" src="https://img.shields.io/badge/Unity_6-111111?style=for-the-badge&logo=unity&logoColor=white" />
 </p>
 
+- Smart contract repo: `https://github.com/ranaufalmuha/vaulters-contract`
+- `vaulters_player`: `A4WGoXEELbB7iAaaa2oNQHCtuirB4cfvDeAYsA7v8yTa`
+- `vaulters_match`: `HjSbgWXcGaWnaj4x3RVvK38edxkWsomMrHdb1f77yx3a`
+
 ## MagicBlock Features Used
 
   <img alt="MagicBlock" src="https://mintcdn.com/magicblock-42/5iyVpKJBt1PkwHw4/logo/MagicBlock-Logo-White.png?fit=max&auto=format&n=5iyVpKJBt1PkwHw4&q=85&s=5729c944bf3688e76971fe8e4237bd07" />
@@ -84,11 +88,20 @@ Match flow:
 
 ## On-Chain Program Configuration
 
+Smart contract source:
+
+- GitHub: `https://github.com/ranaufalmuha/vaulters-contract`
+
 Current program IDs in code:
 
 - Player program: `A4WGoXEELbB7iAaaa2oNQHCtuirB4cfvDeAYsA7v8yTa`
 - Match program: `HjSbgWXcGaWnaj4x3RVvK38edxkWsomMrHdb1f77yx3a`
 - Rollup delegate key: `MAS1Dt9qreoRMQ14YQuhg8UTZMMzDdKhmkZMECCzk57`
+
+Named smart contract addresses:
+
+- `vaulters_player`: `A4WGoXEELbB7iAaaa2oNQHCtuirB4cfvDeAYsA7v8yTa`
+- `vaulters_match`: `HjSbgWXcGaWnaj4x3RVvK38edxkWsomMrHdb1f77yx3a`
 
 Config locations:
 
