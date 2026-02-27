@@ -9,24 +9,24 @@ public class CharacterCombat : MonoBehaviour
     private enum AttackType
     {
         None = 0,
-        Idle1 = 1,
-        Idle2 = 2,
-        Run1 = 3,
-        Run2 = 4,
+        Ground1 = 1,
+        Ground2 = 2,
         Air1 = 5,
         Air2 = 6
     }
 
     [Header("Attack")]
     [SerializeField] private Collider attackHitbox;
-    [SerializeField] private float attackActiveTime = 0.18f;
-    [SerializeField] private float attackEndLag = 0.12f;
-    [SerializeField] private float comboWindow = 0.22f;
-    [SerializeField] private float minAttackInterval = 0.06f;
+    [SerializeField] private AttackTiming groundAttack1Timing = new AttackTiming(0.22f, 0.18f);
+    [SerializeField] private AttackTiming groundAttack2Timing = new AttackTiming(0.18f, 0.24f);
+    [SerializeField] private AttackTiming airAttack1Timing = new AttackTiming(0.14f, 0.12f);
+    [SerializeField] private AttackTiming airAttack2Timing = new AttackTiming(0.12f, 0.12f);
+    [SerializeField] private float comboWindow = 0.28f;
+    [SerializeField] private float comboCooldown = 0.16f;
+    [SerializeField] private Vector2 airAttack2Impulse = new Vector2(3.5f, 4.5f);
 
     [Header("Damage/Knockback")]
-    [SerializeField] private float baseKnockbackIdle = 14f;
-    [SerializeField] private float baseKnockbackRun = 16f;
+    [SerializeField] private float baseKnockbackGround = 14f;
     [SerializeField] private float baseKnockbackAir = 15f;
 
     [SerializeField] private float horizontalBias = 2.5f;
@@ -50,13 +50,16 @@ public class CharacterCombat : MonoBehaviour
     private bool isBlocking;
 
     private bool canCombo;
+    private bool queuedComboAttack;
     private float comboTimer;
-    private float lastAttackTime;
+    private float cooldownTimer;
 
     private AttackType lastAttackType = AttackType.None;
+    private AttackType currentAttackType = AttackType.None;
 
-    // 🔥 TAMBAHAN PENTING
     private float currentAttackForce;
+
+    public bool IsGroundMovementLocked => isBlocking || (isAttacking && IsGroundAttack(currentAttackType));
 
     private void Awake()
     {
@@ -70,13 +73,17 @@ public class CharacterCombat : MonoBehaviour
 
     private void Update()
     {
+        if (cooldownTimer > 0f)
+        {
+            cooldownTimer -= Time.deltaTime;
+        }
+
         if (canCombo)
         {
             comboTimer -= Time.deltaTime;
             if (comboTimer <= 0f)
             {
-                canCombo = false;
-                lastAttackType = AttackType.None;
+                ResetComboState(startCooldown: !isAttacking);
             }
         }
     }
@@ -89,8 +96,7 @@ public class CharacterCombat : MonoBehaviour
 
         if (isBlocking)
         {
-            canCombo = false;
-            lastAttackType = AttackType.None;
+            ResetComboState(startCooldown: false);
         }
     }
 
@@ -98,72 +104,100 @@ public class CharacterCombat : MonoBehaviour
     {
         if (inHitStun) return;
         if (isBlocking) return;
-        if (Time.time - lastAttackTime < minAttackInterval) return;
-        if (isAttacking && !canCombo) return;
+        if (cooldownTimer > 0f) return;
+
+        if (isAttacking)
+        {
+            if (CanQueueCombo())
+            {
+                queuedComboAttack = true;
+            }
+            return;
+        }
 
         AttackType next = DetermineAttackType();
-        lastAttackTime = Time.time;
-
+        if (next == AttackType.None) return;
         StartCoroutine(AttackRoutine(next));
     }
 
     private AttackType DetermineAttackType()
     {
         bool grounded = motor.IsGrounded;
-        bool moving = Mathf.Abs(motor.VelocityX) > 0.15f;
+        bool continueCombo = canCombo && comboTimer > 0f;
 
-        if (canCombo)
-        {
-            if (!grounded) return AttackType.Air2;
-            if (moving) return AttackType.Run2;
-            return AttackType.Idle2;
-        }
+        if (!grounded)
+            return continueCombo && lastAttackType == AttackType.Air1 ? AttackType.Air2 : AttackType.Air1;
 
-        if (!grounded) return AttackType.Air1;
-        if (moving) return AttackType.Run1;
-        return AttackType.Idle1;
+        return continueCombo && lastAttackType == AttackType.Ground1 ? AttackType.Ground2 : AttackType.Ground1;
     }
 
     private IEnumerator AttackRoutine(AttackType type)
     {
         isAttacking = true;
+        bool finisher = IsFinisher(type);
+        AttackTiming timing = GetAttackTiming(type);
+
+        queuedComboAttack = false;
         canCombo = false;
+        comboTimer = 0f;
 
         visual.PlayAttack((int)type);
         lastAttackType = type;
+        currentAttackType = type;
 
-        // 🔥 SET FORCE DI SINI (bukan nanti saat hit)
+        if (type == AttackType.Air2)
+        {
+            Vector2 impulse = new Vector2(airAttack2Impulse.x * visual.FacingSign, airAttack2Impulse.y);
+            motor.ApplyAttackImpulse(impulse);
+        }
+
         switch (type)
         {
-            case AttackType.Run1:
-            case AttackType.Run2:
-                currentAttackForce = baseKnockbackRun;
-                break;
-
             case AttackType.Air1:
             case AttackType.Air2:
                 currentAttackForce = baseKnockbackAir;
                 break;
 
             default:
-                currentAttackForce = baseKnockbackIdle;
+                currentAttackForce = baseKnockbackGround;
                 break;
         }
 
         if (attackHitbox != null) attackHitbox.enabled = true;
-        yield return new WaitForSeconds(attackActiveTime);
-
-        canCombo = true;
-        comboTimer = comboWindow;
+        yield return new WaitForSeconds(timing.ActiveTime);
 
         if (attackHitbox != null) attackHitbox.enabled = false;
 
-        yield return new WaitForSeconds(attackEndLag);
+        if (!finisher)
+        {
+            canCombo = true;
+            comboTimer = comboWindow;
+        }
+
+        yield return new WaitForSeconds(timing.EndLag);
 
         isAttacking = false;
+
+        if (!finisher && queuedComboAttack && canCombo && comboTimer > 0f)
+        {
+            AttackType next = DetermineAttackType();
+            if (next != AttackType.None)
+            {
+                StartCoroutine(AttackRoutine(next));
+                yield break;
+            }
+        }
+
+        if (finisher)
+        {
+            ResetComboState(startCooldown: true);
+        }
+        else if (!isAttacking)
+        {
+            currentAttackType = AttackType.None;
+        }
     }
 
-    // 🔥 FIX: gunakan currentAttackForce, bukan lastAttackType lagi
     public float GetCurrentAttackForce()
     {
         return currentAttackForce;
@@ -193,6 +227,8 @@ public class CharacterCombat : MonoBehaviour
         motor.ResetAirRecovery();
         motor.ApplyKnockback(knockDir, finalForce);
 
+        ResetComboState(startCooldown: false);
+        currentAttackType = AttackType.None;
         visual.PlayHurt();
         StartCoroutine(HitStunRoutine());
     }
@@ -202,5 +238,67 @@ public class CharacterCombat : MonoBehaviour
         inHitStun = true;
         yield return new WaitForSeconds(hitStunDuration);
         inHitStun = false;
+    }
+
+    private bool CanQueueCombo()
+    {
+        return !queuedComboAttack && !IsFinisher(lastAttackType);
+    }
+
+    private static bool IsFinisher(AttackType type)
+    {
+        return type == AttackType.Ground2 || type == AttackType.Air2;
+    }
+
+    private static bool IsGroundAttack(AttackType type)
+    {
+        return type == AttackType.Ground1 || type == AttackType.Ground2;
+    }
+
+    private AttackTiming GetAttackTiming(AttackType type)
+    {
+        switch (type)
+        {
+            case AttackType.Ground1:
+                return groundAttack1Timing;
+            case AttackType.Ground2:
+                return groundAttack2Timing;
+            case AttackType.Air1:
+                return airAttack1Timing;
+            case AttackType.Air2:
+                return airAttack2Timing;
+            default:
+                return groundAttack1Timing;
+        }
+    }
+
+    private void ResetComboState(bool startCooldown)
+    {
+        canCombo = false;
+        queuedComboAttack = false;
+        comboTimer = 0f;
+        lastAttackType = AttackType.None;
+        if (!isAttacking)
+        {
+            currentAttackType = AttackType.None;
+        }
+
+        if (startCooldown)
+        {
+            cooldownTimer = comboCooldown;
+        }
+    }
+
+    [System.Serializable]
+    private struct AttackTiming
+    {
+        public float ActiveTime;
+        public float EndLag;
+
+        public AttackTiming(float activeTime, float endLag)
+        {
+            ActiveTime = activeTime;
+            EndLag = endLag;
+        }
     }
 }

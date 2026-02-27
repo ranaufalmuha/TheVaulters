@@ -3,6 +3,14 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterMotor))]
 public class CharacterVisual : MonoBehaviour
 {
+    private static readonly int AttackTypeHash = Animator.StringToHash("AttackType");
+    private static readonly int AttackTriggerHash = Animator.StringToHash("Attack");
+    private static readonly int HurtTriggerHash = Animator.StringToHash("Hurt");
+    private static readonly int IsBlockingHash = Animator.StringToHash("IsBlocking");
+    private static readonly int SpeedHash = Animator.StringToHash("Speed");
+    private static readonly int GroundedHash = Animator.StringToHash("Grounded");
+    private static readonly int VYHash = Animator.StringToHash("VY");
+
     [SerializeField] private Transform visualRoot;
     [SerializeField] private Animator animator;
 
@@ -18,6 +26,15 @@ public class CharacterVisual : MonoBehaviour
         UpdateAnimator();
     }
 
+    public int FacingSign
+    {
+        get
+        {
+            if (visualRoot == null) return 1;
+            return visualRoot.localScale.x >= 0f ? 1 : -1;
+        }
+    }
+
     public void HandleFlip(float moveX)
     {
         if (moveX == 0 || visualRoot == null) return;
@@ -31,26 +48,32 @@ public class CharacterVisual : MonoBehaviour
     {
         if (animator == null) return;
 
-        animator.SetFloat("Speed", Mathf.Abs(motor.VelocityX));
-        animator.SetBool("Grounded", motor.IsGrounded);
-        animator.SetFloat("VY", motor.VelocityY);
+        animator.SetFloat(SpeedHash, Mathf.Abs(motor.VelocityX));
+        animator.SetBool(GroundedHash, motor.IsGrounded);
+        animator.SetFloat(VYHash, motor.VelocityY);
     }
 
     public void PlayAttack(int attackIndex)
     {
-        animator.SetInteger("AttackType", attackIndex);
-        animator.SetTrigger("Attack");
+        if (animator == null) return;
+
+        animator.SetInteger(AttackTypeHash, attackIndex);
+        animator.SetTrigger(AttackTriggerHash);
     }
 
     public void PlayHurt()
     {
         if (animator == null) return;
 
-        animator.SetTrigger("Hurt");
+        animator.ResetTrigger(AttackTriggerHash);
+        animator.SetInteger(AttackTypeHash, 0);
+        animator.SetTrigger(HurtTriggerHash);
     }
 
     public void SetBlocking(bool value)
     {
-        animator.SetBool("IsBlocking", value);
+        if (animator == null) return;
+
+        animator.SetBool(IsBlockingHash, value);
     }
 }

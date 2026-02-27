@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6869da13f56ba4cd99c3ea1810facf79
+guid: f6dc7e8c4d9f24d8493de911c8a6abb0
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,375 +110,287 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 1x atk_char_0
+      name: crouching_0
       rect:
         serializedVersion: 2
-        x: 118
-        y: 257
-        width: 35
-        height: 54
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: dc1a5ea0de6d54e5281cbc5b8cd2e17c
-      internalID: 2064547062
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_1
-      rect:
-        serializedVersion: 2
-        x: 274
-        y: 257
-        width: 41
-        height: 52
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f2b419827da8c4037835eca165ae14cc
-      internalID: 598827537
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_2
-      rect:
-        serializedVersion: 2
-        x: 423
-        y: 257
-        width: 57
-        height: 53
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3eb3fc4965be545a88ff0332681946ac
-      internalID: 1579939607
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_3
-      rect:
-        serializedVersion: 2
-        x: 584
-        y: 257
-        width: 55
-        height: 52
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7cca653cee4c14da58e9eb3dab0772de
-      internalID: 1565943262
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_4
-      rect:
-        serializedVersion: 2
-        x: 62
-        y: 193
-        width: 88
-        height: 48
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f247aca6f54a34e418bf6e3ab1464061
-      internalID: 1509892146
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_5
-      rect:
-        serializedVersion: 2
-        x: 222
-        y: 193
-        width: 88
-        height: 48
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1df593a17e7324934b1d0d0323d70be2
-      internalID: -49762692
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_7
-      rect:
-        serializedVersion: 2
-        x: 384
-        y: 193
-        width: 86
-        height: 47
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 52c00ae2f800f48f48f04aa3c930392b
-      internalID: -198326026
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_9
-      rect:
-        serializedVersion: 2
-        x: 544
-        y: 193
-        width: 86
-        height: 48
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 94f12d21e2d5148298e56ef06f6fe3af
-      internalID: 597115816
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_10
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 129
-        width: 85
-        height: 48
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1144c63697a2a4df9a5e35b5d76090e9
-      internalID: 607932836
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_11
-      rect:
-        serializedVersion: 2
-        x: 224
-        y: 129
-        width: 85
-        height: 48
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fba42f964747b4bfcaa4169b32e618e7
-      internalID: 852111336
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_12
-      rect:
-        serializedVersion: 2
-        x: 409
-        y: 129
-        width: 60
-        height: 48
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 44d0bbd587b404a569f8c7e886e5d14f
-      internalID: 1073289706
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_13
-      rect:
-        serializedVersion: 2
-        x: 570
-        y: 129
-        width: 59
-        height: 48
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9afa59d14cdc64feeab0e3da91b66dfe
-      internalID: -481335410
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_14
-      rect:
-        serializedVersion: 2
-        x: 90
-        y: 65
-        width: 60
-        height: 47
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c303ebdeb783c4f1896efac6a8c67939
-      internalID: 1004719357
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_15
-      rect:
-        serializedVersion: 2
-        x: 253
-        y: 65
-        width: 58
-        height: 48
-      alignment: 8
-      pivot: {x: 1, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fc58f508e21e34a208fd8ab3a2991230
-      internalID: -657297121
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1x atk_char_16
-      rect:
-        serializedVersion: 2
-        x: 427
-        y: 65
+        x: 0
+        y: 200
         width: 53
-        height: 53
-      alignment: 8
-      pivot: {x: 1, y: 0}
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dffd53517ccdc448ca631a68ea6ae206
-      internalID: 194548492
+      spriteID: a64b3004c9cd74b3b9b9d4fc18257d36
+      internalID: -463631016
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1x atk_char_17
+      name: crouching_1
       rect:
         serializedVersion: 2
-        x: 593
-        y: 65
-        width: 47
-        height: 53
-      alignment: 8
-      pivot: {x: 1, y: 0}
+        x: 53
+        y: 200
+        width: 53
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6ef9122ef3deb4a2f8b6ce6254dff7d9
-      internalID: 466975087
+      spriteID: 938755a6535df463e91cde2b5e7bf501
+      internalID: -504856621
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1x atk_char_18
+      name: crouching_2
       rect:
         serializedVersion: 2
-        x: 116
-        y: 1
-        width: 37
-        height: 54
-      alignment: 8
-      pivot: {x: 1, y: 0}
+        x: 106
+        y: 200
+        width: 53
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b0a623e555fb24544aafa3c3ff31c4aa
-      internalID: -997499071
+      spriteID: 7feb872259c604751b57052d923d0b66
+      internalID: 469679586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crouching_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 150
+        width: 53
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0f2f087204cf466f900d6b9bc48d1dd
+      internalID: -251802693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crouching_4
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 150
+        width: 53
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67fcae8e557ed4bbfb165c4e7eba65c4
+      internalID: 1052843703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crouching_5
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 150
+        width: 53
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8fb5339fed5374d8c8e1a9c3550a2d5b
+      internalID: -930974897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crouching_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 100
+        width: 53
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31ac0849e548e4bad86434abfc5c7496
+      internalID: -693954313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crouching_7
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 100
+        width: 53
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8481903635b5c401ba291828f781bb28
+      internalID: 592532731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crouching_8
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 100
+        width: 53
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f3a22f2d8c09d4b5bb31a410085a1139
+      internalID: 561598900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crouching_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 50
+        width: 53
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63590607b416843cf842cbeec85ac627
+      internalID: -591831318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crouching_10
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 50
+        width: 53
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbf671dea278d49cbaf97a2ed861ec7e
+      internalID: -964814335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crouching_11
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 50
+        width: 53
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e33e3d587b75a4f9e97800213a29b196
+      internalID: -1415954364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crouching_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 53
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f5226b615fb2443babba739c6ceb236
+      internalID: 1197822186
       vertices: []
       indices: 
       edges: []
@@ -487,7 +399,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5d04520a4962e4a6f99c94c24fd03c98
+    spriteID: d2f472dfaeada407288dbe1208571427
     internalID: 0
     vertices: []
     indices: 
@@ -497,27 +409,21 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":1.0,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":8,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":53.0,"y":50.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      1x atk_char_0: 2064547062
-      1x atk_char_1: 598827537
-      1x atk_char_10: 607932836
-      1x atk_char_11: 852111336
-      1x atk_char_12: 1073289706
-      1x atk_char_13: -481335410
-      1x atk_char_14: 1004719357
-      1x atk_char_15: -657297121
-      1x atk_char_16: 194548492
-      1x atk_char_17: 466975087
-      1x atk_char_18: -997499071
-      1x atk_char_2: 1579939607
-      1x atk_char_3: 1565943262
-      1x atk_char_4: 1509892146
-      1x atk_char_5: -49762692
-      1x atk_char_6: -1997121146
-      1x atk_char_7: -198326026
-      1x atk_char_8: 1387476185
-      1x atk_char_9: 597115816
+      crouching_0: -463631016
+      crouching_1: -504856621
+      crouching_10: -964814335
+      crouching_11: -1415954364
+      crouching_12: 1197822186
+      crouching_2: 469679586
+      crouching_3: -251802693
+      crouching_4: 1052843703
+      crouching_5: -930974897
+      crouching_6: -693954313
+      crouching_7: 592532731
+      crouching_8: 561598900
+      crouching_9: -591831318
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

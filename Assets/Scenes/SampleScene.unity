@@ -2280,7 +2280,7 @@ Transform:
   m_GameObject: {fileID: 1088663170}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.318, y: -0.424, z: 0}
+  m_LocalPosition: {x: -0.018, y: -0.424, z: 0}
   m_LocalScale: {x: 1.275754, y: 1.275754, z: 1.275754}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2341,7 +2341,7 @@ SpriteRenderer:
   m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.36, y: 0.16}
+  m_Size: {x: 0.46, y: 0.55}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -2745,12 +2745,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCombat
   attackHitbox: {fileID: 819558317}
-  attackActiveTime: 0.18
-  attackEndLag: 0.12
+  groundAttack1Timing:
+    ActiveTime: 0.22
+    EndLag: 0.18
+  groundAttack2Timing:
+    ActiveTime: 0.18
+    EndLag: 0.24
+  airAttack1Timing:
+    ActiveTime: 0.14
+    EndLag: 0.12
+  airAttack2Timing:
+    ActiveTime: 0.12
+    EndLag: 0.12
   comboWindow: 0.22
-  minAttackInterval: 0.06
-  baseKnockbackIdle: 14
-  baseKnockbackRun: 16
+  comboCooldown: 0.16
+  baseKnockbackGround: 14
   baseKnockbackAir: 15
   horizontalBias: 1.5
   verticalBias: 0.4
@@ -3219,7 +3228,7 @@ Transform:
   m_GameObject: {fileID: 1380380667}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.046, y: 1.23, z: 0}
+  m_LocalPosition: {x: -1.99, y: 2.89, z: 0}
   m_LocalScale: {x: 2.9524624, y: 2.9524624, z: 2.9524624}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3261,12 +3270,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCombat
   attackHitbox: {fileID: 1217343360}
-  attackActiveTime: 0.18
-  attackEndLag: 0.12
+  groundAttack1Timing:
+    ActiveTime: 0.22
+    EndLag: 0.18
+  groundAttack2Timing:
+    ActiveTime: 0.18
+    EndLag: 0.24
+  airAttack1Timing:
+    ActiveTime: 0.14
+    EndLag: 0.12
+  airAttack2Timing:
+    ActiveTime: 0.12
+    EndLag: 0.12
   comboWindow: 0.22
-  minAttackInterval: 0.06
-  baseKnockbackIdle: 14
-  baseKnockbackRun: 16
+  comboCooldown: 0.16
+  baseKnockbackGround: 14
   baseKnockbackAir: 15
   horizontalBias: 1.5
   verticalBias: 0.4

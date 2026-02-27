@@ -14,6 +14,7 @@ public class CharacterMotor : MonoBehaviour
     [Header("Feel")]
     public float fallMultiplier = 4f;
     public float lowJumpMultiplier = 3f;
+    public float attackLiftAssistTime = 0.12f;
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -28,6 +29,7 @@ public class CharacterMotor : MonoBehaviour
     private float moveInput;
     private int jumpCount;
     private bool jumpHeld;
+    private float attackLiftAssistTimer;
 
     private bool inKnockback;
 
@@ -87,6 +89,25 @@ public class CharacterMotor : MonoBehaviour
     {
         jumpCount = 0;
         jumpHeld = false;
+        attackLiftAssistTimer = 0f;
+    }
+
+    public void ApplyAttackImpulse(Vector2 impulse, bool clampUpward = true)
+    {
+        if (rb == null) return;
+
+        Vector3 velocity = rb.linearVelocity;
+        velocity.x += impulse.x;
+
+        float targetY = velocity.y + impulse.y;
+        velocity.y = clampUpward ? Mathf.Max(velocity.y, targetY) : targetY;
+
+        rb.linearVelocity = velocity;
+
+        if (impulse.y > 0f)
+        {
+            attackLiftAssistTimer = attackLiftAssistTime;
+        }
     }
 
     // =============================
@@ -135,7 +156,10 @@ public class CharacterMotor : MonoBehaviour
         );
 
         if (IsGrounded)
+        {
             jumpCount = 0;
+            attackLiftAssistTimer = 0f;
+        }
     }
 
     private void FixedUpdate()
@@ -147,6 +171,12 @@ public class CharacterMotor : MonoBehaviour
             moveInput = 0f;
             return;
         }
+
+        if (attackLiftAssistTimer > 0f)
+        {
+            attackLiftAssistTimer -= Time.fixedDeltaTime;
+        }
+
         rb.linearVelocity = new Vector3(
             moveInput * moveSpeed,
             rb.linearVelocity.y,
@@ -158,7 +188,7 @@ public class CharacterMotor : MonoBehaviour
         {
             rb.linearVelocity += (fallMultiplier - 1f) * Physics.gravity.y * Time.fixedDeltaTime * Vector3.up;
         }
-        else if (rb.linearVelocity.y > 0f && !jumpHeld)
+        else if (rb.linearVelocity.y > 0f && !jumpHeld && attackLiftAssistTimer <= 0f)
         {
             rb.linearVelocity +=
                 (lowJumpMultiplier - 1f) * Physics.gravity.y * Time.fixedDeltaTime * Vector3.up;

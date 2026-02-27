@@ -45,8 +45,8 @@ public class PlayerController : MonoBehaviour
         bool defendPressed = input.Player.Defend.IsPressed();
         bool isBlocking = defendPressed && motor.IsGrounded;
 
-        // ✅ Defend TIDAK freeze movement
-        float moveX = move.x * (isBlocking ? blockMoveMultiplier : 1f);
+        bool lockGroundMovement = isBlocking || combat.IsGroundMovementLocked;
+        float moveX = lockGroundMovement ? 0f : move.x * (isBlocking ? blockMoveMultiplier : 1f);
 
         motor.SetMoveInput(moveX);
         visual.HandleFlip(moveX);
