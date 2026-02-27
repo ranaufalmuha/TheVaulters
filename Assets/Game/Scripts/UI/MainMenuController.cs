@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using System;
+using System.Collections;
 using System.Text;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -20,6 +22,7 @@ public class MainMenuController : MonoBehaviour
     private const ulong SessionFundingLamports = 10000000; // 0.01 SOL
     private const ulong MinMainWalletFeeBufferLamports = 20000;
     private const ulong MinOwnerLamports = 5000000; // 0.005 SOL safety for init/login/delegate/fund txs
+    private const ulong XpPerLevel = 100;
     private const string MagicBlockRollupPublicKey = "MAS1Dt9qreoRMQ14YQuhg8UTZMMzDdKhmkZMECCzk57";
 
     [SerializeField] private string playSceneName = "SampleScene";
@@ -29,16 +32,23 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private TMP_Text xpText;
     [SerializeField] private TMP_Text levelText;
     [SerializeField] private TMP_Text solBalanceText;
+    [SerializeField] private Slider xpSlider;
+    [SerializeField] private TMP_Text toastText;
+    [SerializeField] private float toastDurationSeconds = 2.5f;
     [SerializeField] private GameObject createUsernamePanel;
     [SerializeField] private TMP_InputField usernameInput;
 
     private PublicKey _profilePda;
     private bool _isConnectedAndLoggedIn;
+    private Coroutine _toastRoutine;
 
     private void Start()
     {
         Web3Manager.Init();
+        EnsureXpSliderExists();
+        EnsureToastTextExists();
         SetCreateUsernamePanelVisible(false);
+        ShowToast("Welcome. Connect wallet to continue.");
         _ = RestoreSessionStateAsync();
     }
 
@@ -52,16 +62,19 @@ public class MainMenuController : MonoBehaviour
         if (!_isConnectedAndLoggedIn)
         {
             Debug.LogWarning("Connect wallet and complete login first.");
+            ShowToast("Connect wallet and login first.", true);
             return;
         }
 
         if (!Application.CanStreamedLevelBeLoaded(playSceneName))
         {
             Debug.LogError("Play scene not found in Build Settings: " + playSceneName);
+            ShowToast("Play scene is missing in Build Settings.", true);
             return;
         }
 
         Time.timeScale = 1f;
+        ShowToast("Loading match...");
         SceneManager.LoadScene(playSceneName);
     }
 
@@ -74,6 +87,7 @@ public class MainMenuController : MonoBehaviour
     {
         try
         {
+            ShowToast("Connecting wallet...");
             if (WalletManager.MainAccount == null)
             {
                 await WalletManager.ConnectWallet();
@@ -96,6 +110,7 @@ public class MainMenuController : MonoBehaviour
             {
                 SetCreateUsernamePanelVisible(true);
                 _isConnectedAndLoggedIn = false;
+                ShowToast("Wallet connected. Create your username first.");
                 return;
             }
 
@@ -103,11 +118,13 @@ public class MainMenuController : MonoBehaviour
             string loginSig = await LoginOnChain();
             Debug.Log("Login tx signature: " + loginSig);
             _isConnectedAndLoggedIn = true;
+            ShowToast("Login successful.");
         }
         catch (Exception ex)
         {
             Debug.LogError("Connect wallet flow failed: " + ex.Message);
             _isConnectedAndLoggedIn = false;
+            ShowToast("Connect wallet failed: " + ex.Message, true);
         }
     }
 
@@ -124,6 +141,10 @@ public class MainMenuController : MonoBehaviour
         bool profileExists = await TryLoadProfileAndUpdateUiAsync();
         SetCreateUsernamePanelVisible(!profileExists);
         _isConnectedAndLoggedIn = profileExists;
+        if (profileExists)
+        {
+            ShowToast("Session restored.");
+        }
     }
 
     private async Task CreateUsernameAsync()
@@ -133,6 +154,7 @@ public class MainMenuController : MonoBehaviour
             if (WalletManager.MainAccount == null)
             {
                 Debug.LogError("Connect wallet first.");
+                ShowToast("Connect wallet first.", true);
                 return;
             }
 
@@ -140,12 +162,14 @@ public class MainMenuController : MonoBehaviour
             if (string.IsNullOrEmpty(username))
             {
                 Debug.LogError("Username cannot be empty.");
+                ShowToast("Username cannot be empty.", true);
                 return;
             }
 
             if (username.Length > 50)
             {
                 Debug.LogError("Username max length is 50.");
+                ShowToast("Username max length is 50.", true);
                 return;
             }
 
@@ -159,11 +183,13 @@ public class MainMenuController : MonoBehaviour
             var ix = BuildInitializePlayerInstruction(_profilePda, WalletManager.MainAccount.PublicKey, username);
             string signature = await SendMainWalletInstructionAsync(ix);
             Debug.Log("Initialize player tx signature: " + signature);
+            ShowToast("Creating profile on-chain...");
 
             bool profileExists = await WaitForProfileAsync();
             if (!profileExists)
             {
                 Debug.LogError("Profile still missing after initialize.");
+                ShowToast("Profile not found yet. Please try again.", true);
                 return;
             }
 
@@ -172,6 +198,7 @@ public class MainMenuController : MonoBehaviour
             string loginSig = await LoginOnChain();
             Debug.Log("Login tx signature: " + loginSig);
             _isConnectedAndLoggedIn = true;
+            ShowToast("Username created and login complete.");
         }
         catch (Exception ex)
         {
@@ -183,11 +210,13 @@ public class MainMenuController : MonoBehaviour
                 string loginSig = await LoginOnChain();
                 Debug.Log("Login tx signature: " + loginSig);
                 _isConnectedAndLoggedIn = true;
+                ShowToast("Profile already exists. Logged in.");
                 return;
             }
 
             Debug.LogError("Create username failed: " + ex.Message);
             _isConnectedAndLoggedIn = false;
+            ShowToast("Create username failed: " + ex.Message, true);
         }
     }
 
@@ -350,10 +379,10 @@ public class MainMenuController : MonoBehaviour
         byte[] raw = Convert.FromBase64String(data[0]);
         PlayerProfileView profile = DecodePlayerProfile(raw);
 
-        if (walletAddressText != null) walletAddressText.text = WalletManager.MainAccount.PublicKey.Key;
+        if (walletAddressText != null) walletAddressText.text = FormatWalletAddress(WalletManager.MainAccount.PublicKey.Key);
         if (usernameText != null) usernameText.text = profile.Username;
         if (mmrText != null) mmrText.text = profile.Mmr.ToString();
-        if (xpText != null) xpText.text = profile.Xp.ToString();
+        UpdateXpUi(profile.Xp);
         if (levelText != null) levelText.text = profile.Level.ToString();
 
         return true;
@@ -473,6 +502,154 @@ public class MainMenuController : MonoBehaviour
     {
         if (createUsernamePanel != null)
             createUsernamePanel.SetActive(visible);
+    }
+
+    private void UpdateXpUi(ulong totalXp)
+    {
+        ulong levelXp = totalXp % XpPerLevel;
+        if (xpText != null)
+        {
+            xpText.text = levelXp + "/" + XpPerLevel + " XP";
+        }
+
+        if (xpSlider != null)
+        {
+            xpSlider.minValue = 0f;
+            xpSlider.maxValue = (float)XpPerLevel;
+            xpSlider.SetValueWithoutNotify((float)levelXp);
+        }
+    }
+
+    private void EnsureXpSliderExists()
+    {
+        if (xpSlider != null || xpText == null)
+        {
+            return;
+        }
+
+        GameObject sliderGo = new GameObject("XP Slider", typeof(RectTransform), typeof(Image), typeof(Slider));
+        sliderGo.transform.SetParent(xpText.transform, false);
+
+        RectTransform sliderRect = sliderGo.GetComponent<RectTransform>();
+        sliderRect.anchorMin = new Vector2(0.05f, 0f);
+        sliderRect.anchorMax = new Vector2(0.95f, 0f);
+        sliderRect.pivot = new Vector2(0.5f, 0f);
+        sliderRect.anchoredPosition = new Vector2(0f, 4f);
+        sliderRect.sizeDelta = new Vector2(0f, 12f);
+
+        Image backgroundImage = sliderGo.GetComponent<Image>();
+        backgroundImage.color = new Color(1f, 1f, 1f, 0.2f);
+        backgroundImage.raycastTarget = false;
+
+        GameObject fillAreaGo = new GameObject("Fill Area", typeof(RectTransform));
+        fillAreaGo.transform.SetParent(sliderGo.transform, false);
+        RectTransform fillAreaRect = fillAreaGo.GetComponent<RectTransform>();
+        fillAreaRect.anchorMin = new Vector2(0f, 0f);
+        fillAreaRect.anchorMax = new Vector2(1f, 1f);
+        fillAreaRect.offsetMin = new Vector2(2f, 2f);
+        fillAreaRect.offsetMax = new Vector2(-2f, -2f);
+
+        GameObject fillGo = new GameObject("Fill", typeof(RectTransform), typeof(Image));
+        fillGo.transform.SetParent(fillAreaGo.transform, false);
+        RectTransform fillRect = fillGo.GetComponent<RectTransform>();
+        fillRect.anchorMin = new Vector2(0f, 0f);
+        fillRect.anchorMax = new Vector2(1f, 1f);
+        fillRect.offsetMin = Vector2.zero;
+        fillRect.offsetMax = Vector2.zero;
+
+        Image fillImage = fillGo.GetComponent<Image>();
+        fillImage.color = new Color(0.196f, 0.741f, 0.376f, 0.95f);
+        fillImage.raycastTarget = false;
+
+        Slider slider = sliderGo.GetComponent<Slider>();
+        slider.fillRect = fillRect;
+        slider.targetGraphic = fillImage;
+        slider.direction = Slider.Direction.LeftToRight;
+        slider.minValue = 0f;
+        slider.maxValue = (float)XpPerLevel;
+        slider.SetValueWithoutNotify(0f);
+
+        xpSlider = slider;
+    }
+
+    private void EnsureToastTextExists()
+    {
+        if (toastText != null)
+        {
+            toastText.gameObject.SetActive(false);
+            return;
+        }
+
+        Canvas canvas = FindObjectOfType<Canvas>();
+        if (canvas == null)
+        {
+            return;
+        }
+
+        GameObject toastGo = new GameObject("ToastMessage", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        toastGo.transform.SetParent(canvas.transform, false);
+
+        RectTransform rect = toastGo.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.5f, 0f);
+        rect.anchorMax = new Vector2(0.5f, 0f);
+        rect.pivot = new Vector2(0.5f, 0f);
+        rect.anchoredPosition = new Vector2(0f, 40f);
+        rect.sizeDelta = new Vector2(780f, 64f);
+
+        TextMeshProUGUI tmp = toastGo.GetComponent<TextMeshProUGUI>();
+        tmp.font = xpText != null ? xpText.font : null;
+        tmp.fontSize = 30;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = Color.white;
+
+        toastText = tmp;
+        toastGo.SetActive(false);
+    }
+
+    private void ShowToast(string message, bool isError = false)
+    {
+        if (string.IsNullOrEmpty(message))
+        {
+            return;
+        }
+
+        if (toastText == null)
+        {
+            Debug.Log((isError ? "[Toast Error] " : "[Toast] ") + message);
+            return;
+        }
+
+        toastText.text = message;
+        toastText.color = isError ? new Color(1f, 0.52f, 0.52f, 1f) : Color.white;
+        toastText.gameObject.SetActive(true);
+
+        if (_toastRoutine != null)
+        {
+            StopCoroutine(_toastRoutine);
+        }
+
+        _toastRoutine = StartCoroutine(HideToastRoutine());
+    }
+
+    private IEnumerator HideToastRoutine()
+    {
+        yield return new WaitForSeconds(toastDurationSeconds);
+        if (toastText != null)
+        {
+            toastText.gameObject.SetActive(false);
+        }
+
+        _toastRoutine = null;
+    }
+
+    private static string FormatWalletAddress(string walletAddress)
+    {
+        if (string.IsNullOrEmpty(walletAddress) || walletAddress.Length <= 9)
+        {
+            return walletAddress;
+        }
+
+        return walletAddress.Substring(0, 5) + "..." + walletAddress.Substring(walletAddress.Length - 4, 4);
     }
 
     private struct PlayerProfileView
