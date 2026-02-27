@@ -55,6 +55,7 @@ public class MatchFlowManager : MonoBehaviour
 
     private void Awake()
     {
+        EnsureArenaCameraController();
         AutoBindParticipants();
         AutoBindTimerText();
 
@@ -63,6 +64,20 @@ public class MatchFlowManager : MonoBehaviour
 
         if (resultPanel != null)
             resultPanel.SetActive(false);
+    }
+
+    private void EnsureArenaCameraController()
+    {
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null)
+        {
+            return;
+        }
+
+        if (mainCamera.GetComponent<ArenaCameraController>() == null)
+        {
+            mainCamera.gameObject.AddComponent<ArenaCameraController>();
+        }
     }
 
     private void Start()

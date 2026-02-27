@@ -34,6 +34,12 @@ public class CharacterCombat : MonoBehaviour
     [SerializeField] private float verticalBias = 0.35f;
     [SerializeField] private float ringOutForceAtZeroHP = 42f;
     [SerializeField] private float maxKnockbackForce = 48f;
+    [SerializeField] private float highDamageKnockbackCap = 110f;
+    [SerializeField] private float fatalKnockbackCap = 180f;
+    [SerializeField] private float highDamageForceBonus = 1.35f;
+    [SerializeField] private float fatalForceBonus = 1.75f;
+    [SerializeField] private float highDamageHorizontalBonus = 1.35f;
+    [SerializeField] private float highDamageVerticalBonus = 1.2f;
 
     [Header("Hit Stun")]
     [SerializeField] private float hitStunDuration = 0.22f;
@@ -62,6 +68,7 @@ public class CharacterCombat : MonoBehaviour
 
     private float currentAttackForce;
 
+    public bool IsInHitStun => inHitStun;
     public bool IsGroundMovementLocked => isBlocking || (isAttacking && IsGroundAttack(currentAttackType));
 
     private void Awake()
@@ -241,14 +248,36 @@ public class CharacterCombat : MonoBehaviour
 
         health.TakeDamage(damage);
 
+        float missingHealth01 = 1f - health.HealthPercent01;
         float multiplier = health.GetKnockbackMultiplier();
         float finalForce = baseForce * multiplier;
+        float forceBonus = Mathf.Lerp(1f, highDamageForceBonus, missingHealth01);
+        finalForce *= forceBonus;
+
+        float forceCap = Mathf.Lerp(maxKnockbackForce, highDamageKnockbackCap, missingHealth01);
+
         if (health.CurrentHealth <= 0f)
+        {
+            finalForce *= fatalForceBonus;
             finalForce = Mathf.Max(finalForce, ringOutForceAtZeroHP);
-        finalForce = Mathf.Min(finalForce, maxKnockbackForce);
+            forceCap = Mathf.Max(forceCap, fatalKnockbackCap);
+        }
+
+        finalForce = Mathf.Min(finalForce, forceCap);
 
         float dir = transform.position.x >= attackerPosition.x ? 1f : -1f;
-        Vector3 knockDir = new Vector3(dir * horizontalBias, verticalBias, 0f);
+        float horizontalScale = Mathf.Lerp(1f, highDamageHorizontalBonus, missingHealth01);
+        float verticalScale = Mathf.Lerp(1f, highDamageVerticalBonus, missingHealth01);
+        if (health.CurrentHealth <= 0f)
+        {
+            horizontalScale *= 1.25f;
+            verticalScale *= 1.1f;
+        }
+
+        Vector3 knockDir = new Vector3(
+            dir * horizontalBias * horizontalScale,
+            verticalBias * verticalScale,
+            0f);
 
         motor.ResetAirRecovery();
         motor.ApplyKnockback(knockDir, finalForce);

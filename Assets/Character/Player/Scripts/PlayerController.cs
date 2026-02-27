@@ -40,16 +40,20 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         Vector2 move = input.Player.Move.ReadValue<Vector2>();
+        bool controlLocked = motor.IsInKnockback || combat.IsInHitStun;
 
         // ✅ Defend hanya saat grounded
         bool defendPressed = input.Player.Defend.IsPressed();
-        bool isBlocking = defendPressed && motor.IsGrounded;
+        bool isBlocking = !controlLocked && defendPressed && motor.IsGroundedForActions;
 
-        bool lockGroundMovement = isBlocking || combat.IsGroundMovementLocked;
+        bool lockGroundMovement = controlLocked || isBlocking || combat.IsGroundMovementLocked;
         float moveX = lockGroundMovement ? 0f : move.x * (isBlocking ? blockMoveMultiplier : 1f);
 
         motor.SetMoveInput(moveX);
-        visual.HandleFlip(moveX);
+        if (!controlLocked)
+        {
+            visual.HandleFlip(moveX);
+        }
 
         combat.SetBlocking(isBlocking);
         visual.SetBlocking(isBlocking);
